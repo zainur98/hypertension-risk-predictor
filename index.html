@@ -156,11 +156,11 @@
       transition: width 550ms ease;
     }
 
-    .height-inches-field {
+    .height-inches-input {
       display: none;
     }
 
-    .height-inches-field.show {
+    .height-inches-input.show {
       display: block;
     }
 
@@ -216,16 +216,12 @@
             <label for="height" class="form-label">Height</label>
             <div class="input-group">
               <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
+              <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11" step="0.1" placeholder="Inches" aria-label="Height inches">
               <select class="form-select" id="heightUnit" aria-label="Height unit">
                 <option value="cm">cm</option>
                 <option value="ft-in">feet/inches</option>
               </select>
             </div>
-          </div>
-
-          <div class="col-12 col-md-6 height-inches-field" id="heightInchesField">
-            <label for="heightInches" class="form-label">Height Inches</label>
-            <input type="number" class="form-control" id="heightInches" min="0" max="11" step="0.1" placeholder="Enter inches">
           </div>
 
           <div class="col-12 col-md-6">
@@ -307,11 +303,10 @@
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
-    const heightInchesField = document.getElementById("heightInchesField");
 
     heightUnitInput.addEventListener("change", function () {
       const usesFeetAndInches = heightUnitInput.value === "ft-in";
-      heightInchesField.classList.toggle("show", usesFeetAndInches);
+      heightInchesInput.classList.toggle("show", usesFeetAndInches);
       heightInput.placeholder = usesFeetAndInches ? "Enter feet" : "Enter height";
       heightInput.step = usesFeetAndInches ? "1" : "0.1";
       heightInput.min = usesFeetAndInches ? "1" : "1";
