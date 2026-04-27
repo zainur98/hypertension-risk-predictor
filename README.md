@@ -26,7 +26,7 @@ This is a prototype UI intended to simulate how a future ML-powered hypertension
 The tool asks for:
 
 - Age
-- Height, entered in centimeters or feet
+- Height, entered in centimeters or feet and inches
 - Weight, entered in kilograms or pounds
 - Diabetes status
 - Smoking status

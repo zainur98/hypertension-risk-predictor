@@ -156,6 +156,14 @@
       transition: width 550ms ease;
     }
 
+    .height-inches-field {
+      display: none;
+    }
+
+    .height-inches-field.show {
+      display: block;
+    }
+
     .summary-list {
       margin-bottom: 0;
       padding-left: 1.2rem;
@@ -210,9 +218,14 @@
               <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
               <select class="form-select" id="heightUnit" aria-label="Height unit">
                 <option value="cm">cm</option>
-                <option value="ft">feet</option>
+                <option value="ft-in">feet/inches</option>
               </select>
             </div>
+          </div>
+
+          <div class="col-12 col-md-6 height-inches-field" id="heightInchesField">
+            <label for="heightInches" class="form-label">Height Inches</label>
+            <input type="number" class="form-control" id="heightInches" min="0" max="11" step="0.1" placeholder="Enter inches">
           </div>
 
           <div class="col-12 col-md-6">
@@ -291,19 +304,33 @@
     const riskProgress = document.getElementById("riskProgress");
     const factorList = document.getElementById("factorList");
     const recommendationList = document.getElementById("recommendationList");
+    const heightInput = document.getElementById("height");
+    const heightUnitInput = document.getElementById("heightUnit");
+    const heightInchesInput = document.getElementById("heightInches");
+    const heightInchesField = document.getElementById("heightInchesField");
+
+    heightUnitInput.addEventListener("change", function () {
+      const usesFeetAndInches = heightUnitInput.value === "ft-in";
+      heightInchesField.classList.toggle("show", usesFeetAndInches);
+      heightInput.placeholder = usesFeetAndInches ? "Enter feet" : "Enter height";
+      heightInput.step = usesFeetAndInches ? "1" : "0.1";
+      heightInput.min = usesFeetAndInches ? "1" : "1";
+      heightInchesInput.value = usesFeetAndInches ? heightInchesInput.value : "";
+    });
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
 
       const age = Number(document.getElementById("age").value);
-      const height = Number(document.getElementById("height").value);
-      const heightUnit = document.getElementById("heightUnit").value;
+      const height = Number(heightInput.value);
+      const heightUnit = heightUnitInput.value;
+      const heightInches = Number(heightInchesInput.value || 0);
       const weight = Number(document.getElementById("weight").value);
       const weightUnit = document.getElementById("weightUnit").value;
       const diabetes = document.getElementById("diabetes").value;
       const smoking = document.getElementById("smoking").value;
 
-      if (!age || !height || !weight || !diabetes || !smoking || age <= 0 || height <= 0 || weight <= 0) {
+      if (!age || !height || !weight || !diabetes || !smoking || age <= 0 || height <= 0 || weight <= 0 || heightInches < 0 || heightInches >= 12) {
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         return;
@@ -314,7 +341,7 @@
       const factors = [];
       const recommendations = [];
       let risk = 0;
-      const bmi = calculateBmi(height, heightUnit, weight, weightUnit);
+      const bmi = calculateBmi(height, heightUnit, heightInches, weight, weightUnit);
 
       if (age > 50) {
         risk += 25;
@@ -358,8 +385,9 @@
       renderResults(risk, factors, recommendations);
     });
 
-    function calculateBmi(height, heightUnit, weight, weightUnit) {
-      const heightInMeters = heightUnit === "ft" ? height * 0.3048 : height / 100;
+    function calculateBmi(height, heightUnit, heightInches, weight, weightUnit) {
+      const totalInches = (height * 12) + heightInches;
+      const heightInMeters = heightUnit === "ft-in" ? totalInches * 0.0254 : height / 100;
       const weightInKg = weightUnit === "lbs" ? weight * 0.45359237 : weight;
 
       return weightInKg / (heightInMeters * heightInMeters);
