@@ -205,8 +205,25 @@
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="bmi" class="form-label">BMI</label>
-            <input type="number" class="form-control" id="bmi" min="1" max="80" step="0.1" placeholder="Enter BMI">
+            <label for="height" class="form-label">Height</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
+              <select class="form-select" id="heightUnit" aria-label="Height unit">
+                <option value="cm">cm</option>
+                <option value="ft">feet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label for="weight" class="form-label">Weight</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="weight" min="1" step="0.1" placeholder="Enter weight">
+              <select class="form-select" id="weightUnit" aria-label="Weight unit">
+                <option value="kg">kg</option>
+                <option value="lbs">lbs</option>
+              </select>
+            </div>
           </div>
 
           <div class="col-12 col-md-6">
@@ -279,11 +296,14 @@
       event.preventDefault();
 
       const age = Number(document.getElementById("age").value);
-      const bmi = Number(document.getElementById("bmi").value);
+      const height = Number(document.getElementById("height").value);
+      const heightUnit = document.getElementById("heightUnit").value;
+      const weight = Number(document.getElementById("weight").value);
+      const weightUnit = document.getElementById("weightUnit").value;
       const diabetes = document.getElementById("diabetes").value;
       const smoking = document.getElementById("smoking").value;
 
-      if (!age || !bmi || !diabetes || !smoking || age <= 0 || bmi <= 0) {
+      if (!age || !height || !weight || !diabetes || !smoking || age <= 0 || height <= 0 || weight <= 0) {
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         return;
@@ -294,6 +314,7 @@
       const factors = [];
       const recommendations = [];
       let risk = 0;
+      const bmi = calculateBmi(height, heightUnit, weight, weightUnit);
 
       if (age > 50) {
         risk += 25;
@@ -305,10 +326,10 @@
 
       if (bmi > 30) {
         risk += 25;
-        factors.push("High BMI");
+        factors.push("High BMI (" + bmi.toFixed(1) + ")");
       } else if (bmi > 25) {
         risk += 15;
-        factors.push("Elevated BMI");
+        factors.push("Elevated BMI (" + bmi.toFixed(1) + ")");
       }
 
       if (diabetes === "yes") {
@@ -336,6 +357,13 @@
       risk = Math.min(risk, 100);
       renderResults(risk, factors, recommendations);
     });
+
+    function calculateBmi(height, heightUnit, weight, weightUnit) {
+      const heightInMeters = heightUnit === "ft" ? height * 0.3048 : height / 100;
+      const weightInKg = weightUnit === "lbs" ? weight * 0.45359237 : weight;
+
+      return weightInKg / (heightInMeters * heightInMeters);
+    }
 
     function renderResults(risk, factors, recommendations) {
       const category = getRiskCategory(risk);
