@@ -7,107 +7,263 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root {
-      --medical-blue: #0f6b8f;
-      --medical-teal: #16817a;
-      --soft-bg: #f4f8fb;
-      --panel-border: #d9e5ec;
-      --text-main: #1f2d36;
+      --ink: #17212b;
+      --muted: #667789;
+      --line: #d9e4ec;
+      --surface: #ffffff;
+      --surface-soft: #f7fafc;
+      --blue: #126b9a;
+      --teal: #157f72;
+      --coral: #d74d43;
+      --gold: #c98508;
+      --green: #21835a;
+      --shadow: 0 22px 60px rgba(35, 56, 77, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       min-height: 100vh;
       margin: 0;
       background:
-        linear-gradient(180deg, rgba(15, 107, 143, 0.08), rgba(22, 129, 122, 0.04)),
-        var(--soft-bg);
-      color: var(--text-main);
+        radial-gradient(circle at top left, rgba(18, 107, 154, 0.16), transparent 30rem),
+        linear-gradient(135deg, #f3f7fa 0%, #edf4f6 42%, #f8fbf7 100%);
+      background-size: 140% 140%;
+      animation: pageGlow 14s ease-in-out infinite alternate;
+      color: var(--ink);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     .app-shell {
-      width: min(100%, 920px);
+      width: min(100%, 1040px);
       margin: 0 auto;
-      padding: 32px 16px 18px;
+      padding: 32px 18px 20px;
+      animation: shellEnter 680ms ease both;
     }
 
     .tool-panel {
-      background: #ffffff;
-      border: 1px solid var(--panel-border);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.78);
       border-radius: 8px;
-      box-shadow: 0 18px 45px rgba(31, 45, 54, 0.08);
+      box-shadow: var(--shadow);
       overflow: hidden;
+      backdrop-filter: blur(18px);
     }
 
     .tool-header {
-      padding: 28px 28px 22px;
-      border-bottom: 1px solid var(--panel-border);
-      background: #fbfdfe;
+      position: relative;
+      padding: 32px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(244, 249, 249, 0.92)),
+        linear-gradient(90deg, rgba(18, 107, 154, 0.08), rgba(21, 127, 114, 0.08));
     }
 
     .tool-title {
-      color: var(--medical-blue);
+      color: var(--ink);
       font-size: clamp(1.65rem, 3vw, 2.25rem);
-      font-weight: 700;
-      line-height: 1.2;
+      font-weight: 760;
+      line-height: 1.12;
       margin: 0;
       letter-spacing: 0;
     }
 
     .tool-subtitle {
-      margin: 10px 0 0;
-      color: #627482;
+      margin: 12px 0 0;
+      color: var(--muted);
       max-width: 680px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-bottom: 14px;
+      padding: 6px 10px;
+      border: 1px solid rgba(18, 107, 154, 0.18);
+      border-radius: 999px;
+      background: rgba(18, 107, 154, 0.08);
+      color: #0e5e84;
+      font-size: 0.78rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 4px rgba(21, 127, 114, 0.14);
+      animation: dotPulse 1800ms ease-in-out infinite;
     }
 
     .form-section,
     .result-section {
-      padding: 28px;
+      padding: 32px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 760;
+      color: var(--ink);
+    }
+
+    .section-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
     label {
       font-weight: 650;
-      color: #2d3f49;
+      color: #2b3d4c;
+      margin-bottom: 8px;
     }
 
     .form-control,
     .form-select {
-      border-color: #cbd9e2;
-      border-radius: 6px;
-      min-height: 46px;
+      border-color: #d4e0e8;
+      border-radius: 8px;
+      min-height: 50px;
+      color: var(--ink);
+      background-color: #fbfdfe;
     }
 
     .form-control:focus,
     .form-select:focus {
-      border-color: var(--medical-teal);
-      box-shadow: 0 0 0 0.2rem rgba(22, 129, 122, 0.16);
+      border-color: var(--teal);
+      box-shadow: 0 0 0 0.22rem rgba(21, 127, 114, 0.14);
+      background-color: #ffffff;
+    }
+
+    .input-group .form-control:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    .input-group .form-select:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .field-shell {
+      height: 100%;
+      padding: 16px;
+      border: 1px solid #e5edf2;
+      border-radius: 8px;
+      background: #ffffff;
+      animation: fieldEnter 560ms ease both;
+      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .row > div:nth-child(1) .field-shell {
+      animation-delay: 90ms;
+    }
+
+    .row > div:nth-child(2) .field-shell {
+      animation-delay: 160ms;
+    }
+
+    .row > div:nth-child(3) .field-shell {
+      animation-delay: 230ms;
+    }
+
+    .row > div:nth-child(4) .field-shell {
+      animation-delay: 300ms;
+    }
+
+    .row > div:nth-child(5) .field-shell {
+      animation-delay: 370ms;
+    }
+
+    .row > div:nth-child(6) .field-shell {
+      animation-delay: 440ms;
+    }
+
+    .row > div:nth-child(7) .field-shell {
+      animation-delay: 510ms;
+    }
+
+    .row > div:nth-child(8) .field-shell {
+      animation-delay: 580ms;
+    }
+
+    .field-shell:hover {
+      box-shadow: 0 10px 24px rgba(35, 56, 77, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .field-shell:focus-within {
+      border-color: rgba(21, 127, 114, 0.5);
+      box-shadow: 0 12px 28px rgba(35, 56, 77, 0.09);
+      transform: translateY(-3px);
     }
 
     .btn-calculate {
-      background: var(--medical-blue);
-      border-color: var(--medical-blue);
-      border-radius: 6px;
+      position: relative;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      border: 0;
+      border-radius: 8px;
       font-weight: 700;
-      min-height: 48px;
+      min-height: 52px;
+      box-shadow: 0 14px 24px rgba(18, 107, 154, 0.22);
+      overflow: hidden;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .btn-calculate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.38) 45%, transparent 70%);
+      transform: translateX(-110%);
+      transition: transform 520ms ease;
     }
 
     .btn-calculate:hover,
     .btn-calculate:focus {
-      background: #0b5977;
-      border-color: #0b5977;
+      background: linear-gradient(135deg, #0d5e89, #116f64);
+      box-shadow: 0 16px 28px rgba(18, 107, 154, 0.27);
+      transform: translateY(-2px);
+    }
+
+    .btn-calculate:hover::after,
+    .btn-calculate:focus::after {
+      transform: translateX(110%);
+    }
+
+    .btn-calculate:active {
+      transform: translateY(0) scale(0.99);
     }
 
     .result-section {
-      border-top: 1px solid var(--panel-border);
-      background: #fbfdfe;
+      border-top: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(247, 250, 252, 0.88), rgba(255, 255, 255, 0.96));
       display: none;
     }
 
     .result-section.show {
       display: block;
+      animation: resultEnter 520ms ease both;
     }
 
     .result-section.highlight {
-      animation: resultPulse 900ms ease;
+      animation: resultEnter 520ms ease both, resultPulse 900ms ease;
     }
 
     @keyframes resultPulse {
@@ -118,7 +274,7 @@
 
     .risk-number {
       font-size: clamp(2.25rem, 8vw, 4.25rem);
-      font-weight: 800;
+      font-weight: 820;
       line-height: 1;
       margin: 0;
     }
@@ -131,29 +287,280 @@
       border-radius: 999px;
       font-weight: 750;
       color: #ffffff;
+      animation: badgePop 420ms ease both;
     }
 
     .risk-low {
-      background: #198754;
+      background: var(--green);
     }
 
     .risk-moderate {
-      background: #f59f00;
-      color: #1f2d36;
+      background: var(--gold);
+      color: #ffffff;
     }
 
     .risk-high {
-      background: #dc3545;
+      background: var(--coral);
     }
 
     .progress {
-      height: 14px;
-      background-color: #e7eef3;
+      height: 16px;
+      background-color: #e6eef3;
       border-radius: 999px;
+      overflow: hidden;
     }
 
     .progress-bar {
-      transition: width 550ms ease;
+      background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.12));
+      background-size: 42px 100%;
+      animation: progressShimmer 900ms linear infinite;
+      transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .result-card {
+      height: 100%;
+      padding: 20px;
+      border: 1px solid #e2ebf1;
+      border-radius: 8px;
+      background: #ffffff;
+      animation: cardRise 540ms ease both;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .result-card:hover,
+    .result-meter:hover {
+      box-shadow: 0 14px 28px rgba(35, 56, 77, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .result-meter {
+      padding: 20px;
+      border: 1px solid #e2ebf1;
+      border-radius: 8px;
+      background: #ffffff;
+      animation: cardRise 540ms 90ms ease both;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .meter-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 650;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .metric-card {
+      min-height: 102px;
+      padding: 16px;
+      border: 1px solid #e2ebf1;
+      border-radius: 8px;
+      background: #ffffff;
+      animation: cardRise 540ms ease both;
+    }
+
+    .metric-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .metric-note {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 7px;
+      animation: listItemEnter 360ms ease both;
+    }
+
+    .bar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #314554;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e6eef3;
+    }
+
+    .bar-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--teal));
+      transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .infographic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .info-card {
+      min-height: 190px;
+      padding: 20px;
+      border: 1px solid #e2ebf1;
+      border-radius: 8px;
+      background: #ffffff;
+      animation: cardRise 540ms ease both;
+    }
+
+    .info-card h2 {
+      margin-bottom: 16px;
+    }
+
+    .split-row {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .split-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #314554;
+      font-size: 0.9rem;
+      font-weight: 730;
+    }
+
+    .split-track,
+    .range-track {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e6eef3;
+    }
+
+    .split-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .split-fill.clinical {
+      background: linear-gradient(90deg, var(--blue), #4d95bc);
+    }
+
+    .split-fill.lifestyle {
+      background: linear-gradient(90deg, var(--teal), #70a944);
+    }
+
+    .range-track {
+      height: 16px;
+      margin-top: 22px;
+      overflow: visible;
+      background: linear-gradient(90deg, #5aa879 0 25%, #87b85b 25% 50%, #d8a238 50% 74%, #d65a4e 74% 100%);
+    }
+
+    .range-marker {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 6px 16px rgba(23, 33, 43, 0.24);
+      transform: translate(-50%, -50%);
+      transition: left 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 680;
+    }
+
+    .top-driver-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .top-driver-item {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #e8eef3;
+      border-radius: 8px;
+      background: var(--surface-soft);
+      animation: listItemEnter 360ms ease both;
+    }
+
+    .driver-rank {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(18, 107, 154, 0.1);
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .driver-name {
+      color: #314554;
+      font-weight: 720;
+    }
+
+    .driver-score {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 720;
     }
 
     .height-inches-input {
@@ -166,18 +573,140 @@
 
     .summary-list {
       margin-bottom: 0;
-      padding-left: 1.2rem;
+      padding-left: 0;
+      list-style: none;
     }
 
     .summary-list li {
-      margin: 6px 0;
+      position: relative;
+      margin: 10px 0;
+      padding-left: 24px;
+      color: #3d4e5a;
+      animation: listItemEnter 360ms ease both;
+    }
+
+    .summary-list li:nth-child(2) {
+      animation-delay: 70ms;
+    }
+
+    .summary-list li:nth-child(3) {
+      animation-delay: 140ms;
+    }
+
+    .summary-list li:nth-child(4) {
+      animation-delay: 210ms;
+    }
+
+    .summary-list li::before {
+      content: "";
+      position: absolute;
+      top: 0.62em;
+      left: 0;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 4px rgba(21, 127, 114, 0.1);
     }
 
     footer {
-      color: #637581;
+      color: #667789;
       font-size: 0.92rem;
       text-align: center;
       padding: 18px 8px 0;
+      animation: shellEnter 760ms 120ms ease both;
+    }
+
+    @keyframes pageGlow {
+      from { background-position: 0% 0%; }
+      to { background-position: 100% 100%; }
+    }
+
+    @keyframes shellEnter {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fieldEnter {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes resultEnter {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardRise {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes listItemEnter {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes badgePop {
+      from {
+        opacity: 0;
+        transform: scale(0.88);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(21, 127, 114, 0.14); }
+      50% { box-shadow: 0 0 0 8px rgba(21, 127, 114, 0.07); }
+    }
+
+    @keyframes progressShimmer {
+      from { background-position: 0 0; }
+      to { background-position: 42px 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
     }
 
     @media (max-width: 576px) {
@@ -190,6 +719,29 @@
       .result-section {
         padding: 22px 18px;
       }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .infographic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 577px) and (max-width: 900px) {
+      .metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .infographic-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -197,60 +749,160 @@
   <main class="app-shell">
     <section class="tool-panel" aria-labelledby="pageTitle">
       <header class="tool-header">
-        <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
-        <p class="tool-subtitle">A rule-based demo interface for estimating hypertension risk from common clinical and lifestyle factors.</p>
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
+          <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
+          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a clean, rule-based demo interface.</p>
+        </div>
       </header>
 
       <form id="riskForm" class="form-section" novalidate>
+        <div class="section-heading">
+          <h2>Patient details</h2>
+          <p class="section-note">Enter values to generate an estimated risk profile.</p>
+        </div>
+
         <div id="formAlert" class="alert alert-danger d-none" role="alert">
           Please complete all fields with valid values before calculating risk.
         </div>
 
         <div class="row g-3">
           <div class="col-12 col-md-6">
-            <label for="age" class="form-label">Age</label>
-            <input type="number" class="form-control" id="age" min="1" max="120" placeholder="Enter age">
+            <div class="field-shell">
+              <label for="age" class="form-label">Age</label>
+              <input type="number" class="form-control" id="age" min="1" max="120" placeholder="Enter age">
+            </div>
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="height" class="form-label">Height</label>
-            <div class="input-group">
-              <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
-              <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11" step="0.1" placeholder="Inches" aria-label="Height inches">
-              <select class="form-select" id="heightUnit" aria-label="Height unit">
-                <option value="cm">cm</option>
-                <option value="ft-in">feet/inches</option>
+            <div class="field-shell">
+              <label for="height" class="form-label">Height</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
+                <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11" step="0.1" placeholder="Inches" aria-label="Height inches">
+                <select class="form-select" id="heightUnit" aria-label="Height unit">
+                  <option value="cm">cm</option>
+                  <option value="ft-in">feet/inches</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="weight" class="form-label">Weight</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="weight" min="1" step="0.1" placeholder="Enter weight">
+                <select class="form-select" id="weightUnit" aria-label="Weight unit">
+                  <option value="kg">kg</option>
+                  <option value="lbs">lbs</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="diabetes" class="form-label">Diabetes</label>
+              <select class="form-select" id="diabetes">
+                <option value="">Select status</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
               </select>
             </div>
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="weight" class="form-label">Weight</label>
-            <div class="input-group">
-              <input type="number" class="form-control" id="weight" min="1" step="0.1" placeholder="Enter weight">
-              <select class="form-select" id="weightUnit" aria-label="Weight unit">
-                <option value="kg">kg</option>
-                <option value="lbs">lbs</option>
+            <div class="field-shell">
+              <label for="smoking" class="form-label">Smoking</label>
+              <select class="form-select" id="smoking">
+                <option value="">Select status</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
               </select>
             </div>
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="diabetes" class="form-label">Diabetes</label>
-            <select class="form-select" id="diabetes">
-              <option value="">Select</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
+            <div class="field-shell">
+              <label for="systolic" class="form-label">Blood Pressure</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="systolic" min="70" max="260" placeholder="Systolic">
+                <input type="number" class="form-control" id="diastolic" min="40" max="160" placeholder="Diastolic" aria-label="Diastolic blood pressure">
+                <span class="input-group-text">mmHg</span>
+              </div>
+            </div>
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="smoking" class="form-label">Smoking</label>
-            <select class="form-select" id="smoking">
-              <option value="">Select</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
+            <div class="field-shell">
+              <label for="familyHistory" class="form-label">Family History</label>
+              <select class="form-select" id="familyHistory">
+                <option value="">Select status</option>
+                <option value="yes">Yes, close relative</option>
+                <option value="no">No known history</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="activity" class="form-label">Physical Activity</label>
+              <select class="form-select" id="activity">
+                <option value="">Select level</option>
+                <option value="active">Active, most days</option>
+                <option value="moderate">Moderate, weekly</option>
+                <option value="low">Low or sedentary</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="saltIntake" class="form-label">Salt Intake</label>
+              <select class="form-select" id="saltIntake">
+                <option value="">Select intake</option>
+                <option value="low">Low</option>
+                <option value="moderate">Moderate</option>
+                <option value="high">High or frequent salty foods</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="alcohol" class="form-label">Alcohol Intake</label>
+              <select class="form-select" id="alcohol">
+                <option value="">Select intake</option>
+                <option value="none">None</option>
+                <option value="moderate">Occasional or moderate</option>
+                <option value="high">Heavy or frequent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="stress" class="form-label">Stress Level</label>
+              <select class="form-select" id="stress">
+                <option value="">Select level</option>
+                <option value="low">Low</option>
+                <option value="moderate">Moderate</option>
+                <option value="high">High most days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="sleep" class="form-label">Average Sleep</label>
+              <select class="form-select" id="sleep">
+                <option value="">Select sleep</option>
+                <option value="healthy">7-9 hours</option>
+                <option value="short">Less than 6 hours</option>
+                <option value="long">More than 9 hours</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -260,27 +912,129 @@
       <section id="results" class="result-section" aria-live="polite">
         <div class="row g-4 align-items-center">
           <div class="col-12 col-lg-5">
-            <p class="text-uppercase text-secondary fw-bold small mb-2">Estimated Risk</p>
-            <p id="riskPercentage" class="risk-number">0%</p>
-            <span id="riskCategory" class="risk-badge mt-3">Low Risk</span>
+            <div class="result-card">
+              <p class="text-uppercase text-secondary fw-bold small mb-2">Estimated Risk</p>
+              <p id="riskPercentage" class="risk-number">0%</p>
+              <span id="riskCategory" class="risk-badge mt-3">Low Risk</span>
+            </div>
           </div>
 
           <div class="col-12 col-lg-7">
-            <div class="progress" role="progressbar" aria-label="Hypertension risk percentage" aria-valuemin="0" aria-valuemax="100">
-              <div id="riskProgress" class="progress-bar" style="width: 0%"></div>
+            <div class="result-meter">
+              <div class="progress" role="progressbar" aria-label="Hypertension risk percentage" aria-valuemin="0" aria-valuemax="100">
+                <div id="riskProgress" class="progress-bar" style="width: 0%"></div>
+              </div>
+              <div class="meter-labels" aria-hidden="true">
+                <span>Low</span>
+                <span>Moderate</span>
+                <span>High</span>
+              </div>
             </div>
           </div>
         </div>
 
+        <div class="metric-grid" aria-label="Assessment metrics">
+          <div class="metric-card">
+            <span class="metric-label">BMI</span>
+            <span id="bmiValue" class="metric-value">--</span>
+            <span id="bmiStatus" class="metric-note">Waiting for input</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Blood Pressure</span>
+            <span id="bpValue" class="metric-value">--</span>
+            <span id="bpStatus" class="metric-note">Waiting for input</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Clinical Score</span>
+            <span id="clinicalScore" class="metric-value">0</span>
+            <span class="metric-note">Age, BP, diabetes, history</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Lifestyle Score</span>
+            <span id="lifestyleScore" class="metric-value">0</span>
+            <span class="metric-note">Smoking, activity, diet, sleep</span>
+          </div>
+        </div>
+
+        <div class="infographic-grid" aria-label="Risk infographics">
+          <div class="info-card">
+            <h2 class="h5">Clinical vs Lifestyle</h2>
+            <div class="split-row">
+              <div class="split-label">
+                <span>Clinical</span>
+                <span id="clinicalPercent">0%</span>
+              </div>
+              <div class="split-track">
+                <div id="clinicalSplitFill" class="split-fill clinical"></div>
+              </div>
+            </div>
+            <div class="split-row">
+              <div class="split-label">
+                <span>Lifestyle</span>
+                <span id="lifestylePercent">0%</span>
+              </div>
+              <div class="split-track">
+                <div id="lifestyleSplitFill" class="split-fill lifestyle"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h2 class="h5">BMI Range</h2>
+            <div class="range-track" aria-hidden="true">
+              <span id="bmiMarker" class="range-marker"></span>
+            </div>
+            <div class="range-labels" aria-hidden="true">
+              <span>Under</span>
+              <span>Normal</span>
+              <span>Over</span>
+              <span>Obesity</span>
+            </div>
+            <span id="bmiRangeNote" class="metric-note">Waiting for input</span>
+          </div>
+
+          <div class="info-card">
+            <h2 class="h5">Blood Pressure Stage</h2>
+            <div class="range-track" aria-hidden="true">
+              <span id="bpMarker" class="range-marker"></span>
+            </div>
+            <div class="range-labels" aria-hidden="true">
+              <span>Normal</span>
+              <span>Elevated</span>
+              <span>Stage 1</span>
+              <span>Stage 2+</span>
+            </div>
+            <span id="bpRangeNote" class="metric-note">Waiting for input</span>
+          </div>
+        </div>
+
         <div class="row g-4 mt-2">
-          <div class="col-12 col-md-6">
-            <h2 class="h5">Contributing Factors</h2>
-            <ul id="factorList" class="summary-list"></ul>
+          <div class="col-12 col-lg-4">
+            <div class="result-card">
+              <h2 class="h5">Top Risk Drivers</h2>
+              <ul id="topDrivers" class="top-driver-list"></ul>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-8">
+            <div class="result-card">
+              <h2 class="h5">Risk Contribution Breakdown</h2>
+              <div id="breakdownChart" class="bar-list"></div>
+            </div>
           </div>
 
           <div class="col-12 col-md-6">
-            <h2 class="h5">Recommendations</h2>
-            <ul id="recommendationList" class="summary-list"></ul>
+            <div class="result-card">
+              <h2 class="h5">Contributing Factors</h2>
+              <ul id="factorList" class="summary-list"></ul>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="result-card">
+              <h2 class="h5">Recommendations</h2>
+              <ul id="recommendationList" class="summary-list"></ul>
+            </div>
           </div>
         </div>
       </section>
@@ -300,9 +1054,26 @@
     const riskProgress = document.getElementById("riskProgress");
     const factorList = document.getElementById("factorList");
     const recommendationList = document.getElementById("recommendationList");
+    const bmiValue = document.getElementById("bmiValue");
+    const bmiStatus = document.getElementById("bmiStatus");
+    const bpValue = document.getElementById("bpValue");
+    const bpStatus = document.getElementById("bpStatus");
+    const clinicalScore = document.getElementById("clinicalScore");
+    const lifestyleScore = document.getElementById("lifestyleScore");
+    const breakdownChart = document.getElementById("breakdownChart");
+    const clinicalPercent = document.getElementById("clinicalPercent");
+    const lifestylePercent = document.getElementById("lifestylePercent");
+    const clinicalSplitFill = document.getElementById("clinicalSplitFill");
+    const lifestyleSplitFill = document.getElementById("lifestyleSplitFill");
+    const bmiMarker = document.getElementById("bmiMarker");
+    const bpMarker = document.getElementById("bpMarker");
+    const bmiRangeNote = document.getElementById("bmiRangeNote");
+    const bpRangeNote = document.getElementById("bpRangeNote");
+    const topDrivers = document.getElementById("topDrivers");
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
+    let displayedRisk = 0;
 
     heightUnitInput.addEventListener("change", function () {
       const usesFeetAndInches = heightUnitInput.value === "ft-in";
@@ -324,8 +1095,21 @@
       const weightUnit = document.getElementById("weightUnit").value;
       const diabetes = document.getElementById("diabetes").value;
       const smoking = document.getElementById("smoking").value;
+      const systolic = Number(document.getElementById("systolic").value);
+      const diastolic = Number(document.getElementById("diastolic").value);
+      const familyHistory = document.getElementById("familyHistory").value;
+      const activity = document.getElementById("activity").value;
+      const saltIntake = document.getElementById("saltIntake").value;
+      const alcohol = document.getElementById("alcohol").value;
+      const stress = document.getElementById("stress").value;
+      const sleep = document.getElementById("sleep").value;
 
-      if (!age || !height || !weight || !diabetes || !smoking || age <= 0 || height <= 0 || weight <= 0 || heightInches < 0 || heightInches >= 12) {
+      if (
+        !age || !height || !weight || !diabetes || !smoking || !systolic || !diastolic ||
+        !familyHistory || !activity || !saltIntake || !alcohol || !stress || !sleep ||
+        age <= 0 || height <= 0 || weight <= 0 || heightInches < 0 || heightInches >= 12 ||
+        systolic < 70 || systolic > 260 || diastolic < 40 || diastolic > 160 || systolic <= diastolic
+      ) {
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         return;
@@ -333,51 +1117,30 @@
 
       formAlert.classList.add("d-none");
 
-      const factors = [];
-      const recommendations = [];
-      let risk = 0;
       const bmi = calculateBmi(height, heightUnit, heightInches, weight, weightUnit);
 
-      if (age > 50) {
-        risk += 25;
-        factors.push("Age over 50");
-      } else if (age > 40) {
-        risk += 15;
-        factors.push("Age over 40");
+      if (!Number.isFinite(bmi)) {
+        formAlert.classList.remove("d-none");
+        results.classList.remove("show");
+        return;
       }
 
-      if (bmi > 30) {
-        risk += 25;
-        factors.push("High BMI (" + bmi.toFixed(1) + ")");
-      } else if (bmi > 25) {
-        risk += 15;
-        factors.push("Elevated BMI (" + bmi.toFixed(1) + ")");
-      }
+      const assessment = calculateRiskAssessment({
+        age,
+        bmi,
+        systolic,
+        diastolic,
+        diabetes,
+        smoking,
+        familyHistory,
+        activity,
+        saltIntake,
+        alcohol,
+        stress,
+        sleep
+      });
 
-      if (diabetes === "yes") {
-        risk += 20;
-        factors.push("Diabetes");
-      }
-
-      if (smoking === "yes") {
-        risk += 15;
-        factors.push("Smoking");
-      }
-
-      if (bmi > 25) {
-        recommendations.push("Consider weight reduction");
-      }
-
-      if (smoking === "yes") {
-        recommendations.push("Smoking cessation advised");
-      }
-
-      if (age > 40) {
-        recommendations.push("Regular blood pressure monitoring recommended");
-      }
-
-      risk = Math.min(risk, 100);
-      renderResults(risk, factors, recommendations);
+      renderResults(assessment);
     });
 
     function calculateBmi(height, heightUnit, heightInches, weight, weightUnit) {
@@ -388,25 +1151,377 @@
       return weightInKg / (heightInMeters * heightInMeters);
     }
 
-    function renderResults(risk, factors, recommendations) {
+    function calculateRiskAssessment(inputs) {
+      const factors = [];
+      const recommendations = [];
+      const breakdown = [
+        { label: "Age", score: scoreAge(inputs.age) },
+        { label: "Blood pressure", score: scoreBloodPressure(inputs.systolic, inputs.diastolic) },
+        { label: "BMI", score: scoreBmi(inputs.bmi) },
+        { label: "Medical history", score: 0 },
+        { label: "Lifestyle", score: 0 }
+      ];
+
+      const medicalHistory = breakdown.find(function (item) { return item.label === "Medical history"; });
+      const lifestyle = breakdown.find(function (item) { return item.label === "Lifestyle"; });
+
+      if (inputs.diabetes === "yes") {
+        medicalHistory.score += 12;
+        factors.push("Diabetes");
+        recommendations.push("Discuss blood pressure targets with a clinician");
+      }
+
+      if (inputs.familyHistory === "yes") {
+        medicalHistory.score += 8;
+        factors.push("Family history of hypertension");
+      }
+
+      if (inputs.smoking === "yes") {
+        lifestyle.score += 10;
+        factors.push("Smoking");
+        recommendations.push("Smoking cessation support is strongly recommended");
+      }
+
+      if (inputs.activity === "low") {
+        lifestyle.score += 8;
+        factors.push("Low physical activity");
+        recommendations.push("Build toward regular moderate activity");
+      } else if (inputs.activity === "moderate") {
+        lifestyle.score += 3;
+        factors.push("Moderate activity level");
+      }
+
+      if (inputs.saltIntake === "high") {
+        lifestyle.score += 8;
+        factors.push("High sodium intake");
+        recommendations.push("Reduce sodium-heavy and highly processed foods");
+      } else if (inputs.saltIntake === "moderate") {
+        lifestyle.score += 3;
+      }
+
+      if (inputs.alcohol === "high") {
+        lifestyle.score += 7;
+        factors.push("Heavy alcohol intake");
+        recommendations.push("Consider reducing alcohol intake");
+      } else if (inputs.alcohol === "moderate") {
+        lifestyle.score += 2;
+      }
+
+      if (inputs.stress === "high") {
+        lifestyle.score += 6;
+        factors.push("High stress");
+        recommendations.push("Add stress-management habits and recovery time");
+      } else if (inputs.stress === "moderate") {
+        lifestyle.score += 3;
+      }
+
+      if (inputs.sleep === "short") {
+        lifestyle.score += 6;
+        factors.push("Short sleep duration");
+        recommendations.push("Aim for consistent 7-9 hour sleep when possible");
+      } else if (inputs.sleep === "long") {
+        lifestyle.score += 3;
+      }
+
+      const bpStatusText = getBloodPressureStatus(inputs.systolic, inputs.diastolic);
+      const bmiStatusText = getBmiStatus(inputs.bmi);
+
+      if (breakdown[0].score > 0) {
+        factors.push(inputs.age >= 60 ? "Age 60 or older" : "Age over 40");
+        recommendations.push("Monitor blood pressure regularly");
+      }
+
+      if (breakdown[1].score > 0) {
+        factors.push(bpStatusText);
+        recommendations.push("Confirm readings with repeated measurements");
+      }
+
+      if (breakdown[2].score > 0) {
+        factors.push(bmiStatusText + " BMI (" + inputs.bmi.toFixed(1) + ")");
+        recommendations.push("Consider weight, nutrition, and activity goals");
+      }
+
+      const rawRisk = breakdown.reduce(function (total, item) {
+        return total + item.score;
+      }, 0);
+      const risk = Math.min(Math.round(rawRisk), 100);
+      const clinicalTotal = breakdown[0].score + breakdown[1].score + medicalHistory.score;
+      const lifestyleTotal = breakdown[2].score + lifestyle.score;
+
+      return {
+        risk,
+        bmi: inputs.bmi,
+        systolic: inputs.systolic,
+        diastolic: inputs.diastolic,
+        bmiStatus: bmiStatusText,
+        bpStatus: bpStatusText,
+        clinicalTotal,
+        lifestyleTotal,
+        breakdown,
+        factors,
+        recommendations
+      };
+    }
+
+    function scoreAge(age) {
+      if (age >= 60) {
+        return 16;
+      }
+
+      if (age >= 50) {
+        return 12;
+      }
+
+      if (age >= 40) {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function scoreBloodPressure(systolic, diastolic) {
+      if (systolic >= 180 || diastolic >= 120) {
+        return 24;
+      }
+
+      if (systolic >= 140 || diastolic >= 90) {
+        return 18;
+      }
+
+      if (systolic >= 130 || diastolic >= 80) {
+        return 12;
+      }
+
+      if (systolic >= 120) {
+        return 6;
+      }
+
+      return 0;
+    }
+
+    function scoreBmi(bmi) {
+      if (bmi >= 35) {
+        return 14;
+      }
+
+      if (bmi >= 30) {
+        return 11;
+      }
+
+      if (bmi >= 25) {
+        return 6;
+      }
+
+      return 0;
+    }
+
+    function getBmiStatus(bmi) {
+      if (bmi >= 30) {
+        return "Obesity range";
+      }
+
+      if (bmi >= 25) {
+        return "Overweight range";
+      }
+
+      if (bmi < 18.5) {
+        return "Below normal range";
+      }
+
+      return "Normal range";
+    }
+
+    function getBloodPressureStatus(systolic, diastolic) {
+      if (systolic >= 180 || diastolic >= 120) {
+        return "Hypertensive crisis range";
+      }
+
+      if (systolic >= 140 || diastolic >= 90) {
+        return "Stage 2 hypertension range";
+      }
+
+      if (systolic >= 130 || diastolic >= 80) {
+        return "Stage 1 hypertension range";
+      }
+
+      if (systolic >= 120) {
+        return "Elevated blood pressure range";
+      }
+
+      return "Normal blood pressure range";
+    }
+
+    function renderResults(assessment) {
+      const risk = assessment.risk;
       const category = getRiskCategory(risk);
 
-      riskPercentage.textContent = risk + "%";
+      animateRiskNumber(displayedRisk, risk);
+      displayedRisk = risk;
       riskCategory.textContent = category.label;
       riskCategory.className = "risk-badge mt-3 " + category.className;
+      bmiValue.textContent = assessment.bmi.toFixed(1);
+      bmiStatus.textContent = assessment.bmiStatus;
+      bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
+      bpStatus.textContent = assessment.bpStatus;
+      clinicalScore.textContent = assessment.clinicalTotal;
+      lifestyleScore.textContent = assessment.lifestyleTotal;
 
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
       riskProgress.parentElement.setAttribute("aria-valuenow", String(risk));
 
-      renderList(factorList, factors, "No listed risk factors from the current rule set");
-      renderList(recommendationList, recommendations, "Maintain healthy lifestyle habits and routine checkups");
+      renderBreakdown(assessment.breakdown);
+      renderInfographics(assessment);
+      renderList(factorList, assessment.factors, "No listed risk factors from the current rule set");
+      renderList(recommendationList, assessment.recommendations, "Maintain healthy lifestyle habits and routine checkups");
 
       results.classList.add("show");
       results.classList.remove("highlight");
       void results.offsetWidth;
       results.classList.add("highlight");
       results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function renderBreakdown(breakdown) {
+      breakdownChart.innerHTML = "";
+      const maxScore = Math.max.apply(null, breakdown.map(function (item) {
+        return item.score;
+      })) || 1;
+
+      breakdown.forEach(function (item, index) {
+        const row = document.createElement("div");
+        const top = document.createElement("div");
+        const label = document.createElement("span");
+        const value = document.createElement("span");
+        const track = document.createElement("div");
+        const fill = document.createElement("div");
+
+        row.className = "bar-row";
+        row.style.animationDelay = (index * 70) + "ms";
+        top.className = "bar-top";
+        track.className = "bar-track";
+        fill.className = "bar-fill";
+        label.textContent = item.label;
+        value.textContent = item.score + " pts";
+
+        top.appendChild(label);
+        top.appendChild(value);
+        track.appendChild(fill);
+        row.appendChild(top);
+        row.appendChild(track);
+        breakdownChart.appendChild(row);
+
+        requestAnimationFrame(function () {
+          fill.style.width = item.score / maxScore * 100 + "%";
+        });
+      });
+    }
+
+    function renderInfographics(assessment) {
+      const combinedScore = assessment.clinicalTotal + assessment.lifestyleTotal || 1;
+      const clinicalShare = Math.round(assessment.clinicalTotal / combinedScore * 100);
+      const lifestyleShare = Math.round(assessment.lifestyleTotal / combinedScore * 100);
+
+      clinicalPercent.textContent = clinicalShare + "%";
+      lifestylePercent.textContent = lifestyleShare + "%";
+      clinicalSplitFill.style.width = clinicalShare + "%";
+      lifestyleSplitFill.style.width = lifestyleShare + "%";
+
+      bmiMarker.style.left = clamp((assessment.bmi - 15) / 25 * 100, 0, 100) + "%";
+      bmiRangeNote.textContent = assessment.bmiStatus + " at BMI " + assessment.bmi.toFixed(1);
+
+      bpMarker.style.left = getBloodPressureMarkerPosition(assessment.systolic, assessment.diastolic) + "%";
+      bpRangeNote.textContent = assessment.bpStatus + " at " + assessment.systolic + "/" + assessment.diastolic + " mmHg";
+
+      renderTopDrivers(assessment.breakdown);
+    }
+
+    function renderTopDrivers(breakdown) {
+      const drivers = breakdown
+        .filter(function (item) { return item.score > 0; })
+        .sort(function (a, b) { return b.score - a.score; })
+        .slice(0, 3);
+
+      topDrivers.innerHTML = "";
+
+      if (!drivers.length) {
+        const li = document.createElement("li");
+        li.className = "top-driver-item";
+        li.textContent = "No major drivers detected";
+        topDrivers.appendChild(li);
+        return;
+      }
+
+      drivers.forEach(function (driver, index) {
+        const li = document.createElement("li");
+        const rank = document.createElement("span");
+        const name = document.createElement("span");
+        const score = document.createElement("span");
+
+        li.className = "top-driver-item";
+        li.style.animationDelay = (index * 70) + "ms";
+        rank.className = "driver-rank";
+        name.className = "driver-name";
+        score.className = "driver-score";
+        rank.textContent = index + 1;
+        name.textContent = driver.label;
+        score.textContent = driver.score + " pts";
+
+        li.appendChild(rank);
+        li.appendChild(name);
+        li.appendChild(score);
+        topDrivers.appendChild(li);
+      });
+    }
+
+    function getBloodPressureMarkerPosition(systolic, diastolic) {
+      if (systolic >= 180 || diastolic >= 120) {
+        return 96;
+      }
+
+      if (systolic >= 140 || diastolic >= 90) {
+        return 82;
+      }
+
+      if (systolic >= 130 || diastolic >= 80) {
+        return 60;
+      }
+
+      if (systolic >= 120) {
+        return 36;
+      }
+
+      return 12;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function animateRiskNumber(from, to) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReducedMotion) {
+        riskPercentage.textContent = to + "%";
+        return;
+      }
+
+      const duration = 850;
+      const startTime = performance.now();
+
+      function updateNumber(now) {
+        const elapsed = Math.min((now - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - elapsed, 3);
+        const currentValue = Math.round(from + (to - from) * easedProgress);
+
+        riskPercentage.textContent = currentValue + "%";
+
+        if (elapsed < 1) {
+          requestAnimationFrame(updateNumber);
+        }
+      }
+
+      requestAnimationFrame(updateNumber);
     }
 
     function getRiskCategory(risk) {
