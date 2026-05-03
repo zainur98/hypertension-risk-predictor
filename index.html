@@ -945,12 +945,12 @@
             <span id="bpStatus" class="metric-note">Waiting for input</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Clinical Score</span>
+            <span class="metric-label">Clinical Risk Load</span>
             <span id="clinicalScore" class="metric-value">0</span>
             <span class="metric-note">Age, BP, diabetes, history</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Lifestyle Score</span>
+            <span class="metric-label">Lifestyle Risk Load</span>
             <span id="lifestyleScore" class="metric-value">0</span>
             <span class="metric-note">Smoking, activity, diet, sleep</span>
           </div>
@@ -1363,8 +1363,8 @@
       bmiStatus.textContent = assessment.bmiStatus;
       bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
       bpStatus.textContent = assessment.bpStatus;
-      clinicalScore.textContent = assessment.clinicalTotal;
-      lifestyleScore.textContent = assessment.lifestyleTotal;
+      clinicalScore.textContent = "+" + assessment.clinicalTotal;
+      lifestyleScore.textContent = "+" + assessment.lifestyleTotal;
 
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
@@ -1402,7 +1402,7 @@
         track.className = "bar-track";
         fill.className = "bar-fill";
         label.textContent = item.label;
-        value.textContent = item.score + " pts";
+        value.textContent = "+" + item.score + " risk";
 
         top.appendChild(label);
         top.appendChild(value);
@@ -1465,7 +1465,7 @@
         score.className = "driver-score";
         rank.textContent = index + 1;
         name.textContent = driver.label;
-        score.textContent = driver.score + " pts";
+        score.textContent = "+" + driver.score + " risk";
 
         li.appendChild(rank);
         li.appendChild(name);
