@@ -1,0 +1,13 @@
+id,age,sex,height,height_unit,height_inches,weight,weight_unit,systolic,diastolic,diabetes,smoking,family_history,activity,salt_intake,alcohol,stress,sleep,baseline_date,hypertension_within_5_years
+P001,32,female,168,cm,0,62,kg,112,72,no,no,no,high,low,none,low,normal,2021-01-15,false
+P002,45,male,175,cm,0,84,kg,126,78,no,yes,yes,moderate,moderate,moderate,moderate,normal,2021-02-20,true
+P003,57,female,5,ft-in,4,192,lbs,138,86,yes,no,yes,low,high,none,high,short,2021-03-04,true
+P004,63,male,178,cm,0,101,kg,146,94,yes,yes,yes,low,high,high,high,short,2021-04-12,true
+P005,39,female,162,cm,0,58,kg,118,76,no,no,no,moderate,low,none,moderate,normal,2021-05-02,false
+P006,51,male,6,ft-in,1,215,lbs,132,82,no,no,no,low,moderate,moderate,moderate,long,2021-06-17,true
+P007,68,female,155,cm,0,79,kg,158,96,yes,no,yes,low,high,none,moderate,short,2021-07-22,true
+P008,44,male,180,cm,0,78,kg,122,74,no,no,no,high,low,none,low,normal,2021-08-09,false
+P009,59,female,5,ft-in,2,176,lbs,142,88,no,yes,yes,moderate,high,moderate,high,short,2021-09-13,true
+P010,36,male,172,cm,0,95,kg,128,84,no,yes,no,low,high,high,moderate,long,2021-10-01,true
+P011,48,female,165,cm,0,72,kg,134,82,no,no,yes,moderate,moderate,none,moderate,normal,2021-11-19,true
+P012,29,male,5,ft-in,10,160,lbs,116,70,no,no,no,high,low,none,low,normal,2021-12-06,false

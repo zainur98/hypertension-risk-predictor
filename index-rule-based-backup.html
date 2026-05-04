@@ -752,7 +752,7 @@
         <div>
           <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
           <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
-          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a backend-powered demo interface.</p>
+          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a clean, rule-based demo interface.</p>
         </div>
       </header>
 
@@ -1074,7 +1074,9 @@
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
     const APP_CONFIG = {
-      backendUrl: "http://127.0.0.1:8000/api/risk/estimate"
+      riskEngine: "backend", // Options: "backend" or "browser-rules"
+      backendUrl: "http://127.0.0.1:8000/api/risk/estimate",
+      enableBrowserRuleFallback: true
     };
     const VALIDATION_MESSAGE = "Please complete all fields with valid values before calculating risk.";
     let displayedRisk = 0;
@@ -1122,6 +1124,15 @@
 
       formAlert.classList.add("d-none");
 
+      const bmi = calculateBmi(height, heightUnit, heightInches, weight, weightUnit);
+
+      if (!Number.isFinite(bmi)) {
+        formAlert.textContent = VALIDATION_MESSAGE;
+        formAlert.classList.remove("d-none");
+        results.classList.remove("show");
+        return;
+      }
+
       const assessmentInput = {
         age,
         height,
@@ -1129,6 +1140,7 @@
         heightInches,
         weight,
         weightUnit,
+        bmi,
         systolic,
         diastolic,
         diabetes,
@@ -1142,15 +1154,32 @@
       };
 
       try {
-        const assessment = await requestBackendAssessment(assessmentInput);
+        const assessment = await getRiskAssessment(assessmentInput);
         renderResults(assessment);
       } catch (error) {
-        formAlert.textContent = "Unable to calculate risk. Check that the backend is running.";
+        formAlert.textContent = "Unable to calculate risk. Check that the backend is running or enable browser rule fallback.";
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         console.error(error);
       }
     });
+
+    async function getRiskAssessment(inputs) {
+      if (APP_CONFIG.riskEngine === "browser-rules") {
+        return calculateRiskAssessment(inputs);
+      }
+
+      try {
+        return await requestBackendAssessment(inputs);
+      } catch (error) {
+        if (!APP_CONFIG.enableBrowserRuleFallback) {
+          throw error;
+        }
+
+        console.warn("Backend risk API unavailable. Falling back to browser rules.", error);
+        return calculateRiskAssessment(inputs);
+      }
+    }
 
     async function requestBackendAssessment(inputs) {
       const response = await fetch(APP_CONFIG.backendUrl, {
@@ -1190,7 +1219,6 @@
     function normalizeBackendAssessment(data, inputs) {
       return {
         risk: data.riskPercent,
-        category: data.category,
         bmi: data.calculated.bmi,
         systolic: inputs.systolic,
         diastolic: inputs.diastolic,
@@ -1204,9 +1232,217 @@
       };
     }
 
+    function calculateBmi(height, heightUnit, heightInches, weight, weightUnit) {
+      const totalInches = (height * 12) + heightInches;
+      const heightInMeters = heightUnit === "ft-in" ? totalInches * 0.0254 : height / 100;
+      const weightInKg = weightUnit === "lbs" ? weight * 0.45359237 : weight;
+
+      return weightInKg / (heightInMeters * heightInMeters);
+    }
+
+    function calculateRiskAssessment(inputs) {
+      const factors = [];
+      const recommendations = [];
+      const breakdown = [
+        { label: "Age", score: scoreAge(inputs.age) },
+        { label: "Blood pressure", score: scoreBloodPressure(inputs.systolic, inputs.diastolic) },
+        { label: "BMI", score: scoreBmi(inputs.bmi) },
+        { label: "Medical history", score: 0 },
+        { label: "Lifestyle", score: 0 }
+      ];
+
+      const medicalHistory = breakdown.find(function (item) { return item.label === "Medical history"; });
+      const lifestyle = breakdown.find(function (item) { return item.label === "Lifestyle"; });
+
+      if (inputs.diabetes === "yes") {
+        medicalHistory.score += 12;
+        factors.push("Diabetes");
+        recommendations.push("Discuss blood pressure targets with a clinician");
+      }
+
+      if (inputs.familyHistory === "yes") {
+        medicalHistory.score += 8;
+        factors.push("Family history of hypertension");
+      }
+
+      if (inputs.smoking === "yes") {
+        lifestyle.score += 10;
+        factors.push("Smoking");
+        recommendations.push("Smoking cessation support is strongly recommended");
+      }
+
+      if (inputs.activity === "low") {
+        lifestyle.score += 8;
+        factors.push("Low physical activity");
+        recommendations.push("Build toward regular moderate activity");
+      } else if (inputs.activity === "moderate") {
+        lifestyle.score += 3;
+        factors.push("Moderate activity level");
+      }
+
+      if (inputs.saltIntake === "high") {
+        lifestyle.score += 8;
+        factors.push("High sodium intake");
+        recommendations.push("Reduce sodium-heavy and highly processed foods");
+      } else if (inputs.saltIntake === "moderate") {
+        lifestyle.score += 3;
+      }
+
+      if (inputs.alcohol === "high") {
+        lifestyle.score += 7;
+        factors.push("Heavy alcohol intake");
+        recommendations.push("Consider reducing alcohol intake");
+      } else if (inputs.alcohol === "moderate") {
+        lifestyle.score += 2;
+      }
+
+      if (inputs.stress === "high") {
+        lifestyle.score += 6;
+        factors.push("High stress");
+        recommendations.push("Add stress-management habits and recovery time");
+      } else if (inputs.stress === "moderate") {
+        lifestyle.score += 3;
+      }
+
+      if (inputs.sleep === "short") {
+        lifestyle.score += 6;
+        factors.push("Short sleep duration");
+        recommendations.push("Aim for consistent 7-9 hour sleep when possible");
+      } else if (inputs.sleep === "long") {
+        lifestyle.score += 3;
+      }
+
+      const bpStatusText = getBloodPressureStatus(inputs.systolic, inputs.diastolic);
+      const bmiStatusText = getBmiStatus(inputs.bmi);
+
+      if (breakdown[0].score > 0) {
+        factors.push(inputs.age >= 60 ? "Age 60 or older" : "Age over 40");
+        recommendations.push("Monitor blood pressure regularly");
+      }
+
+      if (breakdown[1].score > 0) {
+        factors.push(bpStatusText);
+        recommendations.push("Confirm readings with repeated measurements");
+      }
+
+      if (breakdown[2].score > 0) {
+        factors.push(bmiStatusText + " BMI (" + inputs.bmi.toFixed(1) + ")");
+        recommendations.push("Consider weight, nutrition, and activity goals");
+      }
+
+      const rawRisk = breakdown.reduce(function (total, item) {
+        return total + item.score;
+      }, 0);
+      const risk = Math.min(Math.round(rawRisk), 100);
+      const clinicalTotal = breakdown[0].score + breakdown[1].score + medicalHistory.score;
+      const lifestyleTotal = breakdown[2].score + lifestyle.score;
+
+      return {
+        risk,
+        bmi: inputs.bmi,
+        systolic: inputs.systolic,
+        diastolic: inputs.diastolic,
+        bmiStatus: bmiStatusText,
+        bpStatus: bpStatusText,
+        clinicalTotal,
+        lifestyleTotal,
+        breakdown,
+        factors,
+        recommendations
+      };
+    }
+
+    function scoreAge(age) {
+      if (age >= 60) {
+        return 16;
+      }
+
+      if (age >= 50) {
+        return 12;
+      }
+
+      if (age >= 40) {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function scoreBloodPressure(systolic, diastolic) {
+      if (systolic >= 180 || diastolic >= 120) {
+        return 24;
+      }
+
+      if (systolic >= 140 || diastolic >= 90) {
+        return 18;
+      }
+
+      if (systolic >= 130 || diastolic >= 80) {
+        return 12;
+      }
+
+      if (systolic >= 120) {
+        return 6;
+      }
+
+      return 0;
+    }
+
+    function scoreBmi(bmi) {
+      if (bmi >= 35) {
+        return 14;
+      }
+
+      if (bmi >= 30) {
+        return 11;
+      }
+
+      if (bmi >= 25) {
+        return 6;
+      }
+
+      return 0;
+    }
+
+    function getBmiStatus(bmi) {
+      if (bmi >= 30) {
+        return "Obesity range";
+      }
+
+      if (bmi >= 25) {
+        return "Overweight range";
+      }
+
+      if (bmi < 18.5) {
+        return "Below normal range";
+      }
+
+      return "Normal range";
+    }
+
+    function getBloodPressureStatus(systolic, diastolic) {
+      if (systolic >= 180 || diastolic >= 120) {
+        return "Hypertensive crisis range";
+      }
+
+      if (systolic >= 140 || diastolic >= 90) {
+        return "Stage 2 hypertension range";
+      }
+
+      if (systolic >= 130 || diastolic >= 80) {
+        return "Stage 1 hypertension range";
+      }
+
+      if (systolic >= 120) {
+        return "Elevated blood pressure range";
+      }
+
+      return "Normal blood pressure range";
+    }
+
     function renderResults(assessment) {
       const risk = assessment.risk;
-      const category = getRiskCategory(assessment.category, risk);
+      const category = getRiskCategory(risk);
 
       animateRiskNumber(displayedRisk, risk);
       displayedRisk = risk;
@@ -1377,8 +1613,8 @@
       requestAnimationFrame(updateNumber);
     }
 
-    function getRiskCategory(categoryLabel, risk) {
-      if (categoryLabel === "Low Risk" || risk < 30) {
+    function getRiskCategory(risk) {
+      if (risk < 30) {
         return {
           label: "Low Risk",
           className: "risk-low",
@@ -1386,7 +1622,7 @@
         };
       }
 
-      if (categoryLabel === "Moderate Risk" || risk <= 70) {
+      if (risk <= 70) {
         return {
           label: "Moderate Risk",
           className: "risk-moderate",

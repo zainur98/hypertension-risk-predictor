@@ -1,14 +1,15 @@
 # Hypertension Risk Assessment Tool
 
-A single-page clinical decision support demo that estimates hypertension risk using expanded rule-based logic. The project is built with pure HTML, CSS, and vanilla JavaScript, with Bootstrap loaded through a CDN.
+A single-page clinical decision support demo that estimates hypertension risk through a backend model API. The project uses a pure HTML/CSS/JavaScript frontend, with Bootstrap loaded through a CDN, and a small Python backend.
 
 This is a prototype UI intended to simulate how a future ML-powered hypertension risk prediction system might behave. It is not a validated medical model.
 
 ## Features
 
 - Responsive medical-style dashboard interface
-- No backend, database, or build step required
-- Expanded rule-based hypertension risk scoring
+- Frontend calls the backend API for risk estimation
+- Python backend POC with synthetic test data
+- Demo logistic regression model trained from synthetic data
 - Automatic BMI calculation
 - Blood pressure stage classification
 - Risk percentage and category output
@@ -40,44 +41,13 @@ The tool asks for:
 - Stress level
 - Average sleep duration
 
-BMI is calculated automatically from height and weight before applying the risk rules.
+BMI is calculated by the backend from height and weight before risk estimation.
 
-## Risk Logic
+## Risk Model
 
-The risk score starts at `0` and increases based on weighted clinical and lifestyle factors. The final score is capped at `100%`.
+The active app uses `model-v1`, a small logistic regression model trained from `backend/data/test_patients.csv`. The model predicts the synthetic target `hypertension_within_5_years` and returns a risk percentage, risk category, model-derived contribution breakdown, factors, and recommendations.
 
-### Clinical Factors
-
-| Factor | Rule | Score |
-| --- | --- | --- |
-| Age | 40 to 49 | +7 |
-| Age | 50 to 59 | +12 |
-| Age | 60 or older | +16 |
-| Blood pressure | Systolic 120 to 129 | +6 |
-| Blood pressure | Systolic 130+ or diastolic 80+ | +12 |
-| Blood pressure | Systolic 140+ or diastolic 90+ | +18 |
-| Blood pressure | Systolic 180+ or diastolic 120+ | +24 |
-| Diabetes | Yes | +12 |
-| Family history | Close relative with hypertension | +8 |
-
-### Body Composition And Lifestyle Factors
-
-| Factor | Rule | Score |
-| --- | --- | --- |
-| BMI | 25 to 29.9 | +6 |
-| BMI | 30 to 34.9 | +11 |
-| BMI | 35 or higher | +14 |
-| Smoking | Yes | +10 |
-| Physical activity | Moderate | +3 |
-| Physical activity | Low or sedentary | +8 |
-| Salt intake | Moderate | +3 |
-| Salt intake | High | +8 |
-| Alcohol intake | Moderate | +2 |
-| Alcohol intake | Heavy or frequent | +7 |
-| Stress | Moderate | +3 |
-| Stress | High most days | +6 |
-| Sleep | More than 9 hours | +3 |
-| Sleep | Less than 6 hours | +6 |
+`index-rule-based-backup.html` preserves the previous HTML version that included browser-side rule-based logic.
 
 ## Risk Categories
 
@@ -120,11 +90,17 @@ Recommendations are generated from the user's selected risk factors. Examples in
 
 ## How to Run
 
-Clone the repository and open `index.html` in any modern web browser.
+Clone the repository, train the demo model if needed, start the backend, and open `index.html` in any modern web browser.
 
 ```bash
 git clone <repository-url>
 cd hypertension-risk-predictor
+```
+
+Start the backend:
+
+```powershell
+py -3.9 -m backend.app
 ```
 
 Then open:
@@ -133,13 +109,154 @@ Then open:
 index.html
 ```
 
-No installation, build step, or server is required.
+The active frontend requires the backend API. For the old browser-only rule demo, open `index-rule-based-backup.html`.
+
+## Optional Backend POC
+
+The `backend/` folder contains a small Python standard-library API. The active frontend sends form submissions to this API and does not include browser-side risk scoring.
+
+### Frontend Risk Engine Flag
+
+The frontend risk source is controlled in `index.html`:
+
+```js
+const APP_CONFIG = {
+  backendUrl: "http://127.0.0.1:8000/api/risk/estimate"
+};
+```
+
+### Backend Risk Engine Flag
+
+The backend uses `model-v1` by default:
+
+```bash
+python -m backend.app
+```
+
+You can also set it explicitly:
+
+```powershell
+$env:RISK_ENGINE="model-v1"
+python -m backend.app
+```
+
+`model-v1` is the supported active engine.
+
+## Training The Demo Model
+
+The project includes a dependency-free logistic regression trainer that uses the synthetic data in `backend/data/test_patients.csv`.
+
+Train the model:
+
+```bash
+python -m backend.model_train
+```
+
+On Windows, if `python` is not available but the Python launcher is, use:
+
+```powershell
+py -3.9 -m backend.model_train
+```
+
+This creates:
+
+```text
+backend/models/model-v1.json
+```
+
+Run the API with the trained model:
+
+```powershell
+$env:RISK_ENGINE="model-v1"
+python -m backend.app
+```
+
+Or with the Python launcher:
+
+```powershell
+py -3.9 -m backend.app
+```
+
+Important: `model-v1` is trained only on small synthetic test data. It proves the engineering flow, but it is not clinically meaningful.
+
+Start the API from the repository root:
+
+```bash
+python -m backend.app
+```
+
+The server runs at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Available endpoints:
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/health` | Check API status |
+| GET | `/api/test-patients` | Return synthetic patient rows |
+| POST | `/api/risk/estimate` | Estimate hypertension risk with the active backend model |
+
+Example request:
+
+```json
+{
+  "age": 57,
+  "height": 5,
+  "heightUnit": "ft-in",
+  "heightInches": 4,
+  "weight": 192,
+  "weightUnit": "lbs",
+  "systolic": 138,
+  "diastolic": 86,
+  "diabetes": "yes",
+  "smoking": "no",
+  "familyHistory": "yes",
+  "activity": "low",
+  "saltIntake": "high",
+  "alcohol": "none",
+  "stress": "high",
+  "sleep": "short"
+}
+```
+
+Example response fields:
+
+```json
+{
+  "riskPercent": 99,
+  "category": "High Risk",
+  "modelVersion": "model-v1",
+  "calculated": {
+    "bmi": 33.0,
+    "bloodPressureStage": "Stage 1 hypertension range"
+  },
+  "riskDrivers": [
+    { "factor": "Activity Low", "riskContribution": 25 },
+    { "factor": "Salt High", "riskContribution": 20 },
+    { "factor": "Stress High", "riskContribution": 16 }
+  ]
+}
+```
 
 ## Project Structure
 
 ```text
 hypertension-risk-predictor/
+├── backend/
+│   ├── app.py
+│   ├── model_features.py
+│   ├── model_predict.py
+│   ├── model_train.py
+│   ├── patient_utils.py
+│   ├── models/
+│   │   └── model-v1.json
+│   └── data/
+│       └── test_patients.csv
 ├── index.html
+├── index-rule-based-backup.html
 └── README.md
 ```
 
@@ -149,7 +266,8 @@ hypertension-risk-predictor/
 - CSS3
 - Vanilla JavaScript
 - Bootstrap CDN
+- Python standard library backend POC
 
 ## Disclaimer
 
-This tool is for educational purposes only and not a substitute for professional medical advice, diagnosis, or treatment. The scoring system is a simplified demonstration and should not be used for real clinical decisions.
+This tool is for educational purposes only and not a substitute for professional medical advice, diagnosis, or treatment. The model is trained on synthetic test data and should not be used for real clinical decisions.

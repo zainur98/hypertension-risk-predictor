@@ -1,0 +1,160 @@
+"""Prediction helpers for the synthetic-data logistic regression model."""
+
+from __future__ import annotations
+
+import json
+import math
+from pathlib import Path
+from typing import Any
+
+from .model_features import FEATURE_NAMES, features_from_payload
+from .patient_utils import (
+    get_blood_pressure_status,
+    get_bmi_status,
+    get_risk_category,
+)
+
+
+MODEL_PATH = Path(__file__).parent / "models" / "model-v1.json"
+
+
+def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
+    model = load_model()
+    features, patient, bmi = features_from_payload(payload)
+    scaled_features = scale_features(features, model["means"], model["scales"])
+    probability = sigmoid(dot(model["weights"], scaled_features) + model["bias"])
+    risk = min(round(probability * 100), 100)
+    feature_impacts = get_feature_impacts(model, scaled_features, risk)
+    breakdown = get_group_breakdown(feature_impacts)
+    clinical_total = sum(item["score"] for item in breakdown if item["label"] in {"Age", "Blood pressure", "Medical history"})
+    lifestyle_total = sum(item["score"] for item in breakdown if item["label"] in {"BMI", "Lifestyle"})
+
+    return {
+        "riskPercent": risk,
+        "category": get_risk_category(risk),
+        "modelVersion": model["modelVersion"],
+        "calculated": {
+            "bmi": round(bmi, 1),
+            "bmiStatus": get_bmi_status(bmi),
+            "bloodPressure": f"{round(patient.systolic)}/{round(patient.diastolic)}",
+            "bloodPressureStage": get_blood_pressure_status(patient.systolic, patient.diastolic),
+            "clinicalRiskLoad": clinical_total,
+            "lifestyleRiskLoad": lifestyle_total,
+            "modelProbability": round(probability, 4),
+        },
+        "breakdown": breakdown,
+        "riskDrivers": feature_impacts[:3],
+        "factors": [impact["factor"] for impact in feature_impacts[:5]] or ["No major model drivers detected"],
+        "recommendations": get_recommendations(feature_impacts),
+        "disclaimer": "Synthetic-data demo model. Not a substitute for professional medical advice.",
+    }
+
+
+def load_model() -> dict[str, Any]:
+    if not MODEL_PATH.exists():
+        raise ValueError("model-v1 is not trained yet. Run: python -m backend.model_train")
+
+    return json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+
+
+def scale_features(features: list[float], means: list[float], scales: list[float]) -> list[float]:
+    return [
+        (value - means[index]) / scales[index]
+        for index, value in enumerate(features)
+    ]
+
+
+def get_feature_impacts(model: dict[str, Any], scaled_features: list[float], risk: int) -> list[dict[str, Any]]:
+    raw_impacts = []
+
+    for name, weight, value in zip(FEATURE_NAMES, model["weights"], scaled_features):
+        contribution = weight * value
+        if contribution > 0:
+            raw_impacts.append({
+                "feature": name,
+                "factor": format_feature_name(name),
+                "rawContribution": contribution,
+            })
+
+    total = sum(item["rawContribution"] for item in raw_impacts) or 1
+    impacts = []
+
+    for item in raw_impacts:
+        impacts.append({
+            "feature": item["feature"],
+            "factor": item["factor"],
+            "riskContribution": max(1, round(item["rawContribution"] / total * risk)),
+        })
+
+    impacts.sort(key=lambda item: item["riskContribution"], reverse=True)
+    return impacts
+
+
+def get_group_breakdown(feature_impacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    groups = {
+        "Age": 0,
+        "Blood pressure": 0,
+        "BMI": 0,
+        "Medical history": 0,
+        "Lifestyle": 0,
+    }
+
+    for impact in feature_impacts:
+        groups[group_for_feature(impact["feature"])] += impact["riskContribution"]
+
+    return [
+        {"label": label, "score": score}
+        for label, score in groups.items()
+    ]
+
+
+def group_for_feature(feature: str) -> str:
+    if feature == "age":
+        return "Age"
+    if feature in {"systolic", "diastolic"}:
+        return "Blood pressure"
+    if feature == "bmi":
+        return "BMI"
+    if feature in {"diabetes_yes", "family_history_yes"}:
+        return "Medical history"
+    return "Lifestyle"
+
+
+def get_recommendations(feature_impacts: list[dict[str, Any]]) -> list[str]:
+    recommendations = []
+    recommendation_map = {
+        "bmi": "Review weight, nutrition, and activity goals",
+        "systolic": "Confirm blood pressure readings with repeated measurements",
+        "diastolic": "Confirm blood pressure readings with repeated measurements",
+        "diabetes_yes": "Discuss blood pressure targets with a clinician",
+        "smoking_yes": "Smoking cessation support is strongly recommended",
+        "activity_low": "Build toward regular moderate activity",
+        "salt_high": "Reduce sodium-heavy and highly processed foods",
+        "alcohol_high": "Consider reducing alcohol intake",
+        "stress_high": "Add stress-management habits and recovery time",
+        "sleep_short": "Aim for consistent 7-9 hour sleep when possible",
+    }
+
+    for impact in feature_impacts:
+        recommendation = recommendation_map.get(impact["feature"])
+        if recommendation and recommendation not in recommendations:
+            recommendations.append(recommendation)
+
+    return recommendations or ["Maintain healthy lifestyle habits and routine checkups"]
+
+
+def format_feature_name(name: str) -> str:
+    return name.replace("_", " ").title()
+
+
+def dot(weights: list[float], features: list[float]) -> float:
+    return sum(weight * value for weight, value in zip(weights, features))
+
+
+def sigmoid(value: float) -> float:
+    if value >= 0:
+        z = math.exp(-value)
+        return 1 / (1 + z)
+
+    z = math.exp(value)
+    return z / (1 + z)
