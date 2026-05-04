@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
+from .llm_explain import OLLAMA_MODEL, build_explanation_with_ollama
 from .model_features import FEATURE_NAMES, features_from_payload
 from .patient_utils import (
     get_blood_pressure_status,
@@ -28,8 +29,8 @@ def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
     breakdown = get_group_breakdown(feature_impacts)
     clinical_total = sum(item["score"] for item in breakdown if item["label"] in {"Age", "Blood pressure", "Medical history"})
     lifestyle_total = sum(item["score"] for item in breakdown if item["label"] in {"BMI", "Lifestyle"})
-
-    return {
+    fallback_explanation = get_plain_language_explanation(risk, feature_impacts, breakdown)
+    assessment = {
         "riskPercent": risk,
         "category": get_risk_category(risk),
         "modelVersion": model["modelVersion"],
@@ -48,6 +49,12 @@ def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
         "recommendations": get_recommendations(feature_impacts),
         "disclaimer": "Synthetic-data demo model. Not a substitute for professional medical advice.",
     }
+    explanation, source = get_assessment_explanation(assessment, fallback_explanation)
+    assessment["explanation"] = explanation
+    assessment["explanationSource"] = source
+    assessment["explanationModel"] = OLLAMA_MODEL if source == "ollama" else "deterministic-fallback"
+
+    return assessment
 
 
 def load_model() -> dict[str, Any]:
@@ -143,7 +150,79 @@ def get_recommendations(feature_impacts: list[dict[str, Any]]) -> list[str]:
     return recommendations or ["Maintain healthy lifestyle habits and routine checkups"]
 
 
+def get_plain_language_explanation(
+    risk: int,
+    feature_impacts: list[dict[str, Any]],
+    breakdown: list[dict[str, Any]],
+) -> str:
+    """Summarize the structured model output without changing the risk score."""
+    category = get_risk_category(risk).lower()
+    drivers = [impact["factor"] for impact in feature_impacts[:3]]
+    driver_text = format_driver_text(drivers)
+    clinical_score = sum(
+        item["score"]
+        for item in breakdown
+        if item["label"] in {"Age", "Blood pressure", "Medical history"}
+    )
+    lifestyle_score = sum(
+        item["score"]
+        for item in breakdown
+        if item["label"] in {"BMI", "Lifestyle"}
+    )
+    stronger_area = "clinical factors" if clinical_score >= lifestyle_score else "lifestyle factors"
+
+    if driver_text:
+        return (
+            f"This result falls in the {category} range. The main signals increasing "
+            f"the estimate are {driver_text}, with more of the current risk load coming "
+            f"from {stronger_area}."
+        )
+
+    return (
+        f"This result falls in the {category} range. The model did not find one dominant "
+        "risk driver in the submitted values, so routine monitoring and healthy habits "
+        "remain the main focus."
+    )
+
+
+def get_assessment_explanation(assessment: dict[str, Any], fallback: str) -> tuple[str, str]:
+    try:
+        return build_explanation_with_ollama(assessment), "ollama"
+    except Exception as exc:
+        print(f"Ollama explanation unavailable; using fallback: {exc}")
+        return fallback, "fallback"
+
+
+def format_driver_text(drivers: list[str]) -> str:
+    if not drivers:
+        return ""
+    if len(drivers) == 1:
+        return drivers[0]
+    if len(drivers) == 2:
+        return f"{drivers[0]} and {drivers[1]}"
+    return f"{drivers[0]}, {drivers[1]}, and {drivers[2]}"
+
+
 def format_feature_name(name: str) -> str:
+    label_map = {
+        "bmi": "BMI",
+        "diabetes_yes": "diabetes",
+        "smoking_yes": "smoking",
+        "family_history_yes": "family history",
+        "activity_low": "low physical activity",
+        "activity_moderate": "moderate physical activity",
+        "salt_high": "high salt intake",
+        "salt_moderate": "moderate salt intake",
+        "alcohol_high": "high alcohol intake",
+        "alcohol_moderate": "moderate alcohol intake",
+        "stress_high": "high stress",
+        "stress_moderate": "moderate stress",
+        "sleep_short": "short sleep",
+        "sleep_long": "long sleep",
+    }
+    if name in label_map:
+        return label_map[name]
+
     return name.replace("_", " ").title()
 
 

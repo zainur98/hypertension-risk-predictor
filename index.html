@@ -609,6 +609,13 @@
       box-shadow: 0 0 0 4px rgba(21, 127, 114, 0.1);
     }
 
+    .explanation-text {
+      margin: 0;
+      color: #314554;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
     footer {
       color: #667789;
       font-size: 0.92rem;
@@ -850,7 +857,7 @@
               <label for="activity" class="form-label">Physical Activity</label>
               <select class="form-select" id="activity">
                 <option value="">Select level</option>
-                <option value="active">Active, most days</option>
+                <option value="high">Active, most days</option>
                 <option value="moderate">Moderate, weekly</option>
                 <option value="low">Low or sedentary</option>
               </select>
@@ -898,7 +905,7 @@
               <label for="sleep" class="form-label">Average Sleep</label>
               <select class="form-select" id="sleep">
                 <option value="">Select sleep</option>
-                <option value="healthy">7-9 hours</option>
+                <option value="normal">7-9 hours</option>
                 <option value="short">Less than 6 hours</option>
                 <option value="long">More than 9 hours</option>
               </select>
@@ -1023,6 +1030,14 @@
             </div>
           </div>
 
+          <div class="col-12">
+            <div class="result-card">
+              <h2 class="h5">Plain-Language Summary</h2>
+              <p id="plainLanguageSummary" class="explanation-text">Waiting for input</p>
+              <span id="plainLanguageSource" class="metric-note">Local explanation engine</span>
+            </div>
+          </div>
+
           <div class="col-12 col-md-6">
             <div class="result-card">
               <h2 class="h5">Contributing Factors</h2>
@@ -1070,6 +1085,8 @@
     const bmiRangeNote = document.getElementById("bmiRangeNote");
     const bpRangeNote = document.getElementById("bpRangeNote");
     const topDrivers = document.getElementById("topDrivers");
+    const plainLanguageSummary = document.getElementById("plainLanguageSummary");
+    const plainLanguageSource = document.getElementById("plainLanguageSource");
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
@@ -1198,6 +1215,9 @@
         bpStatus: data.calculated.bloodPressureStage,
         clinicalTotal: data.calculated.clinicalRiskLoad,
         lifestyleTotal: data.calculated.lifestyleRiskLoad,
+        explanation: data.explanation,
+        explanationSource: data.explanationSource,
+        explanationModel: data.explanationModel,
         breakdown: data.breakdown,
         factors: data.factors,
         recommendations: data.recommendations
@@ -1225,6 +1245,8 @@
 
       renderBreakdown(assessment.breakdown);
       renderInfographics(assessment);
+      plainLanguageSummary.textContent = assessment.explanation || "Summary unavailable for this assessment.";
+      plainLanguageSource.textContent = getExplanationSourceLabel(assessment);
       renderList(factorList, assessment.factors, "No listed risk factors from the current rule set");
       renderList(recommendationList, assessment.recommendations, "Maintain healthy lifestyle habits and routine checkups");
 
@@ -1399,6 +1421,14 @@
         className: "risk-high",
         progressClass: "bg-danger"
       };
+    }
+
+    function getExplanationSourceLabel(assessment) {
+      if (assessment.explanationSource === "ollama") {
+        return "Generated locally with " + assessment.explanationModel;
+      }
+
+      return "Using deterministic fallback summary";
     }
 
     function renderList(listElement, items, emptyText) {
