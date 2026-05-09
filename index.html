@@ -759,7 +759,7 @@
         <div>
           <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
           <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
-          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a backend-powered demo interface.</p>
+          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a backend-powered demo.</p>
         </div>
       </header>
 
@@ -832,7 +832,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="systolic" class="form-label">Blood Pressure</label>
+              <label for="systolic" class="form-label">Blood pressure</label>
               <div class="input-group">
                 <input type="number" class="form-control" id="systolic" min="70" max="260" placeholder="Systolic">
                 <input type="number" class="form-control" id="diastolic" min="40" max="160" placeholder="Diastolic" aria-label="Diastolic blood pressure">
@@ -843,7 +843,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="familyHistory" class="form-label">Family History</label>
+              <label for="familyHistory" class="form-label">Family history</label>
               <select class="form-select" id="familyHistory">
                 <option value="">Select status</option>
                 <option value="yes">Yes, close relative</option>
@@ -854,7 +854,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="activity" class="form-label">Physical Activity</label>
+              <label for="activity" class="form-label">Physical activity</label>
               <select class="form-select" id="activity">
                 <option value="">Select level</option>
                 <option value="high">Active, most days</option>
@@ -866,7 +866,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="saltIntake" class="form-label">Salt Intake</label>
+              <label for="saltIntake" class="form-label">Salt intake</label>
               <select class="form-select" id="saltIntake">
                 <option value="">Select intake</option>
                 <option value="low">Low</option>
@@ -878,7 +878,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="alcohol" class="form-label">Alcohol Intake</label>
+              <label for="alcohol" class="form-label">Alcohol intake</label>
               <select class="form-select" id="alcohol">
                 <option value="">Select intake</option>
                 <option value="none">None</option>
@@ -890,7 +890,7 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="stress" class="form-label">Stress Level</label>
+              <label for="stress" class="form-label">Stress level</label>
               <select class="form-select" id="stress">
                 <option value="">Select level</option>
                 <option value="low">Low</option>
@@ -902,10 +902,10 @@
 
           <div class="col-12 col-md-6">
             <div class="field-shell">
-              <label for="sleep" class="form-label">Average Sleep</label>
+              <label for="sleep" class="form-label">Average sleep</label>
               <select class="form-select" id="sleep">
                 <option value="">Select sleep</option>
-                <option value="normal">7-9 hours</option>
+                <option value="normal">7 to 9 hours</option>
                 <option value="short">Less than 6 hours</option>
                 <option value="long">More than 9 hours</option>
               </select>
@@ -947,7 +947,7 @@
             <span id="bmiStatus" class="metric-note">Waiting for input</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Blood Pressure</span>
+            <span class="metric-label">Blood pressure</span>
             <span id="bpValue" class="metric-value">--</span>
             <span id="bpStatus" class="metric-note">Waiting for input</span>
           </div>
@@ -965,7 +965,7 @@
 
         <div class="infographic-grid" aria-label="Risk infographics">
           <div class="info-card">
-            <h2 class="h5">Clinical vs Lifestyle</h2>
+            <h2 class="h5">Clinical vs. lifestyle</h2>
             <div class="split-row">
               <div class="split-label">
                 <span>Clinical</span>
@@ -987,21 +987,21 @@
           </div>
 
           <div class="info-card">
-            <h2 class="h5">BMI Range</h2>
+            <h2 class="h5">BMI range</h2>
             <div class="range-track" aria-hidden="true">
               <span id="bmiMarker" class="range-marker"></span>
             </div>
             <div class="range-labels" aria-hidden="true">
-              <span>Under</span>
+              <span>Underweight</span>
               <span>Normal</span>
-              <span>Over</span>
+              <span>Overweight</span>
               <span>Obesity</span>
             </div>
             <span id="bmiRangeNote" class="metric-note">Waiting for input</span>
           </div>
 
           <div class="info-card">
-            <h2 class="h5">Blood Pressure Stage</h2>
+            <h2 class="h5">Blood pressure stage</h2>
             <div class="range-track" aria-hidden="true">
               <span id="bpMarker" class="range-marker"></span>
             </div>
@@ -1018,21 +1018,21 @@
         <div class="row g-4 mt-2">
           <div class="col-12 col-lg-4">
             <div class="result-card">
-              <h2 class="h5">Top Risk Drivers</h2>
+              <h2 class="h5">Top risk drivers</h2>
               <ul id="topDrivers" class="top-driver-list"></ul>
             </div>
           </div>
 
           <div class="col-12 col-lg-8">
             <div class="result-card">
-              <h2 class="h5">Risk Contribution Breakdown</h2>
+              <h2 class="h5">Risk contribution breakdown</h2>
               <div id="breakdownChart" class="bar-list"></div>
             </div>
           </div>
 
           <div class="col-12">
             <div class="result-card">
-              <h2 class="h5">Plain-Language Summary</h2>
+              <h2 class="h5">Plain-language summary</h2>
               <p id="plainLanguageSummary" class="explanation-text">Waiting for input</p>
               <span id="plainLanguageSource" class="metric-note">Local explanation engine</span>
             </div>
@@ -1040,7 +1040,7 @@
 
           <div class="col-12 col-md-6">
             <div class="result-card">
-              <h2 class="h5">Contributing Factors</h2>
+              <h2 class="h5">Contributing factors</h2>
               <ul id="factorList" class="summary-list"></ul>
             </div>
           </div>
@@ -1247,7 +1247,7 @@
       renderInfographics(assessment);
       plainLanguageSummary.textContent = assessment.explanation || "Summary unavailable for this assessment.";
       plainLanguageSource.textContent = getExplanationSourceLabel(assessment);
-      renderList(factorList, assessment.factors, "No listed risk factors from the current rule set");
+      renderList(factorList, assessment.factors, "No listed risk factors from the current model output");
       renderList(recommendationList, assessment.recommendations, "Maintain healthy lifestyle habits and routine checkups");
 
       results.classList.add("show");
@@ -1428,7 +1428,7 @@
         return "Generated locally with " + assessment.explanationModel;
       }
 
-      return "Using deterministic fallback summary";
+      return "Using deterministic summary";
     }
 
     function renderList(listElement, items, emptyText) {

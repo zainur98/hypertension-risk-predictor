@@ -139,7 +139,7 @@ def get_recommendations(feature_impacts: list[dict[str, Any]]) -> list[str]:
         "salt_high": "Reduce sodium-heavy and highly processed foods",
         "alcohol_high": "Consider reducing alcohol intake",
         "stress_high": "Add stress-management habits and recovery time",
-        "sleep_short": "Aim for consistent 7-9 hour sleep when possible",
+        "sleep_short": "Aim for a consistent 7 to 9 hours of sleep when possible",
     }
 
     for impact in feature_impacts:
