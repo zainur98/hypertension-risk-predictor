@@ -171,17 +171,36 @@ def get_plain_language_explanation(
     )
     stronger_area = "clinical factors" if clinical_score >= lifestyle_score else "lifestyle factors"
 
+    if risk < 10:
+        return (
+            "Low risk estimate, with no major risk driver standing out in this screening. "
+            "Keep routine checkups in mind and review any health concerns with a clinician."
+        )
+
+    if risk < 30:
+        return (
+            f"Low risk estimate, with {driver_text} contributing most in this screening. "
+            "Keep routine checkups in mind and review any health concerns with a clinician."
+        )
+
+    if risk <= 70 and driver_text:
+        return (
+            f"Moderate risk estimate, with {driver_text} as the clearest contributors. "
+            f"The pattern leans toward {stronger_area}; review this screening result "
+            "with a clinician."
+        )
+
     if driver_text:
         return (
-            f"This result falls in the {category} range. The main signals increasing "
-            f"the estimate are {driver_text}, with more of the current risk load coming "
-            f"from {stronger_area}."
+            f"{category.capitalize()} estimate, with {driver_text} as the clearest "
+            f"contributors. The pattern leans toward {stronger_area}; review this "
+            "screening result with a clinician."
         )
 
     return (
-        f"This result falls in the {category} range. The model did not find one dominant "
-        "risk driver in the submitted values, so routine monitoring and healthy habits "
-        "remain the main focus."
+        f"{category.capitalize()} estimate, with no single dominant driver in the "
+        "submitted values. Keep monitoring routine readings and use this as a screening "
+        "aid, not medical advice."
     )
 
 

@@ -115,9 +115,9 @@ index.html
 
 The active frontend requires the backend API. For the old browser-only rule demo, open `index-rule-based-backup.html`.
 
-### Local LLM Summary
+### Optional Local LLM Summary
 
-Install and start Ollama before running the backend if you want the summary to come from a local LLM:
+The app uses the deterministic summary by default. To opt into local Ollama summaries, install and start Ollama:
 
 ```bash
 ollama serve
@@ -126,6 +126,7 @@ ollama serve
 In another terminal, start the backend:
 
 ```bash
+export OLLAMA_EXPLANATIONS="1"
 python -m backend.app
 ```
 
@@ -139,7 +140,7 @@ export OLLAMA_BASE_URL="http://127.0.0.1:11434"
 export OLLAMA_EXPLANATIONS="1"
 ```
 
-To disable local LLM summaries and use only fallback text:
+To use only deterministic summaries, omit `OLLAMA_EXPLANATIONS` or set:
 
 ```bash
 export OLLAMA_EXPLANATIONS="0"
