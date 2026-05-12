@@ -753,7 +753,7 @@
     .summary-list li {
       position: relative;
       margin: 10px 0;
-      padding-left: 24px;
+      padding-left: 22px;
       color: #3d4e5a;
       animation: listItemEnter 360ms ease both;
     }
@@ -773,7 +773,7 @@
     .summary-list li::before {
       content: "";
       position: absolute;
-      top: 0.62em;
+      top: 0.5em;
       left: 0;
       width: 9px;
       height: 9px;
@@ -1476,7 +1476,7 @@
         track.className = "bar-track";
         fill.className = "bar-fill";
         label.textContent = item.label;
-        value.textContent = "+" + item.score + " risk";
+        value.textContent = "+" + item.score;
 
         top.appendChild(label);
         top.appendChild(value);
@@ -1539,7 +1539,7 @@
         score.className = "driver-score";
         rank.textContent = index + 1;
         name.textContent = driver.label;
-        score.textContent = "+" + driver.score + " risk";
+        score.textContent = "+" + driver.score;
 
         li.appendChild(rank);
         li.appendChild(name);
