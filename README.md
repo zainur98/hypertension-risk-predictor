@@ -1,6 +1,6 @@
 # Hypertension Risk Assessment Tool
 
-A single-page clinical decision support demo that estimates hypertension risk through a backend model API. The project uses a pure HTML/CSS/JavaScript frontend, with Bootstrap loaded through a CDN, and a small Python backend.
+A single-page clinical decision support demo that estimates hypertension risk through a backend model API. The project uses a bundled HTML/CSS/JavaScript frontend and a small Python standard-library backend.
 
 This is a prototype UI intended to simulate how a future ML-powered hypertension risk prediction system might behave. It is not a validated medical model.
 
@@ -9,6 +9,7 @@ This is a prototype UI intended to simulate how a future ML-powered hypertension
 - Responsive medical-style dashboard interface
 - Frontend calls the backend API for risk estimation
 - Python backend POC with synthetic test data
+- Self-contained executable release path
 - Demo logistic regression model trained from synthetic data
 - Automatic BMI calculation
 - Blood pressure stage classification
@@ -50,7 +51,7 @@ The active app uses `model-v1`, a small logistic regression model trained from `
 
 The plain-language summary is generated after the risk calculation. By default, the backend uses a deterministic summary. If `OLLAMA_EXPLANATIONS=1` is set, the backend can use a local Ollama model for wording; if the model is missing, the backend pulls `qwen2.5:1.5b` automatically on the first assessment request.
 
-`index-rule-based-backup.html` preserves the previous HTML version that included browser-side rule-based logic.
+`index-frontend-poc.html` preserves the previous HTML version that included browser-side rule-based logic.
 
 ## Risk Categories
 
@@ -94,7 +95,7 @@ Recommendations are generated from the user's selected risk factors. Examples in
 
 ## How to Run
 
-Clone the repository, train the demo model if needed, start the backend, and open `index.html` in any modern web browser.
+Clone the repository, train the demo model if needed, and start the backend. The backend serves the frontend and opens it in your default browser.
 
 ```bash
 git clone <repository-url>
@@ -103,17 +104,59 @@ cd hypertension-risk-predictor
 
 Start the backend:
 
+```bash
+python -m backend.app
+```
+
+The app runs at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+On Windows, if `python` is not available but the Python launcher is, use:
+
 ```powershell
 py -3.9 -m backend.app
 ```
 
-Then open:
+The active frontend is served by the backend API. For the frontend proof of concept with browser-side rules, open `index-frontend-poc.html`.
 
-```text
-index.html
+## Executable Release
+
+The first release target is a deterministic, self-contained desktop executable. Users should be able to run the executable, have a local server start automatically, and use the app in a browser without installing Python or Ollama.
+
+Build requirements for the release machine:
+
+```bash
+python -m pip install pyinstaller
 ```
 
-The active frontend requires the backend API. For the old browser-only rule demo, open `index-rule-based-backup.html`.
+Build the executable:
+
+```bash
+python build_release.py
+```
+
+The built file is written to:
+
+```text
+dist/HypertensionRiskTool
+```
+
+On Windows, the output is:
+
+```text
+dist/HypertensionRiskTool.exe
+```
+
+Run the executable and it will open:
+
+```text
+http://127.0.0.1:8000/
+```
+
+The release bundle includes `index.html`, `index-frontend-poc.html`, `backend/data/test_patients.csv`, and `backend/models/model-v1.json`. Ollama is disabled by default and is not required for this release.
 
 ### Optional Local LLM Summary
 
@@ -156,7 +199,9 @@ The frontend risk source is controlled in `index.html`:
 
 ```js
 const APP_CONFIG = {
-  backendUrl: "http://127.0.0.1:8000/api/risk/estimate"
+  backendUrl: window.location.protocol === "file:"
+    ? "http://127.0.0.1:8000/api/risk/estimate"
+    : "/api/risk/estimate"
 };
 ```
 
@@ -290,8 +335,10 @@ hypertension-risk-predictor/
 │   │   └── model-v1.json
 │   └── data/
 │       └── test_patients.csv
+├── build_release.py
 ├── index.html
-├── index-rule-based-backup.html
+├── index-frontend-poc.html
+├── release_entry.py
 └── README.md
 ```
 
@@ -300,8 +347,8 @@ hypertension-risk-predictor/
 - HTML5
 - CSS3
 - Vanilla JavaScript
-- Bootstrap CDN
 - Python standard library backend POC
+- PyInstaller release build
 
 ## Disclaimer
 

@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hypertension Risk Assessment Tool</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root {
       --ink: #17212b;
@@ -22,6 +21,149 @@
 
     * {
       box-sizing: border-box;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .row > * {
+      grid-column: span 12;
+      min-width: 0;
+    }
+
+    p,
+    h1,
+    h2,
+    ul {
+      margin-top: 0;
+    }
+
+    .g-3 {
+      gap: 1rem;
+    }
+
+    .g-4 {
+      gap: 1.5rem;
+    }
+
+    .align-items-center {
+      align-items: center;
+    }
+
+    .col-12 {
+      grid-column: span 12;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-3 {
+      margin-top: 1rem;
+    }
+
+    .mt-4 {
+      margin-top: 1.5rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .small {
+      font-size: 0.875rem;
+    }
+
+    .fw-bold {
+      font-weight: 700;
+    }
+
+    .text-uppercase {
+      text-transform: uppercase;
+    }
+
+    .text-secondary {
+      color: var(--muted);
+    }
+
+    .h5 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .input-group .form-control,
+    .input-group .form-select {
+      flex: 1 1 auto;
+      min-width: 0;
+      position: relative;
+    }
+
+    .input-group > .form-control:not(:last-child),
+    .input-group > .form-select:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .input-group > .form-control:not(:first-child),
+    .input-group > .form-select:not(:first-child),
+    .input-group > .input-group-text:not(:first-child) {
+      margin-left: -1px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .input-group-text {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      border: 1px solid #d4e0e8;
+      border-left: 0;
+      border-radius: 0 8px 8px 0;
+      background: #eef4f7;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font: inherit;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+    }
+
+    .alert {
+      margin-bottom: 1rem;
+      padding: 12px 14px;
+      border: 1px solid #f0b8b3;
+      border-radius: 8px;
+      background: #fff1f0;
+      color: #8f2f27;
+    }
+
+    .d-none {
+      display: none !important;
     }
 
     body {
@@ -129,6 +271,7 @@
     }
 
     label {
+      display: inline-block;
       font-weight: 650;
       color: #2b3d4c;
       margin-bottom: 8px;
@@ -136,18 +279,34 @@
 
     .form-control,
     .form-select {
-      border-color: #d4e0e8;
+      display: block;
+      width: 100%;
+      padding: 0.375rem 0.75rem;
+      border: 1px solid #d4e0e8;
       border-radius: 8px;
       min-height: 50px;
       color: var(--ink);
       background-color: #fbfdfe;
+      font: inherit;
+      line-height: 1.5;
+    }
+
+    .form-select {
+      padding-right: 2.25rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667789' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
     }
 
     .form-control:focus,
     .form-select:focus {
       border-color: var(--teal);
+      outline: 0;
       box-shadow: 0 0 0 0.22rem rgba(21, 127, 114, 0.14);
       background-color: #ffffff;
+      z-index: 5;
     }
 
     .input-group .form-control:first-child {
@@ -311,10 +470,24 @@
     }
 
     .progress-bar {
+      height: 100%;
+      background-color: var(--teal);
       background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.12));
       background-size: 42px 100%;
       animation: progressShimmer 900ms linear infinite;
       transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .bg-success {
+      background-color: var(--green);
+    }
+
+    .bg-warning {
+      background-color: var(--gold);
+    }
+
+    .bg-danger {
+      background-color: var(--coral);
     }
 
     .result-card {
@@ -750,6 +923,30 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (min-width: 768px) {
+      .col-md-6 {
+        grid-column: span 6;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .col-lg-4 {
+        grid-column: span 4;
+      }
+
+      .col-lg-5 {
+        grid-column: span 5;
+      }
+
+      .col-lg-7 {
+        grid-column: span 7;
+      }
+
+      .col-lg-8 {
+        grid-column: span 8;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1091,7 +1288,9 @@
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
     const APP_CONFIG = {
-      backendUrl: "http://127.0.0.1:8000/api/risk/estimate"
+      backendUrl: window.location.protocol === "file:"
+        ? "http://127.0.0.1:8000/api/risk/estimate"
+        : "/api/risk/estimate"
     };
     const VALIDATION_MESSAGE = "Please complete all fields with valid values before calculating risk.";
     let displayedRisk = 0;
@@ -1437,9 +1636,17 @@
 
       visibleItems.forEach(function (item) {
         const li = document.createElement("li");
-        li.textContent = item;
+        li.textContent = capitalizeListItem(item);
         listElement.appendChild(li);
       });
+    }
+
+    function capitalizeListItem(item) {
+      if (!item) {
+        return item;
+      }
+
+      return item.charAt(0).toUpperCase() + item.slice(1);
     }
   </script>
 </body>

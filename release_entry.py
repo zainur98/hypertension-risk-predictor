@@ -1,0 +1,9 @@
+"""Executable entrypoint for the self-contained release build."""
+
+from __future__ import annotations
+
+from backend.app import main
+
+
+if __name__ == "__main__":
+    main()

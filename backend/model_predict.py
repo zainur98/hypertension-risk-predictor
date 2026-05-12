@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import math
-from pathlib import Path
 from typing import Any
 
 from .llm_explain import OLLAMA_MODEL, build_explanation_with_ollama
@@ -14,9 +13,10 @@ from .patient_utils import (
     get_bmi_status,
     get_risk_category,
 )
+from .resources import resource_path
 
 
-MODEL_PATH = Path(__file__).parent / "models" / "model-v1.json"
+MODEL_PATH = resource_path("backend/models/model-v1.json")
 
 
 def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
@@ -225,19 +225,19 @@ def format_driver_text(drivers: list[str]) -> str:
 def format_feature_name(name: str) -> str:
     label_map = {
         "bmi": "BMI",
-        "diabetes_yes": "diabetes",
-        "smoking_yes": "smoking",
-        "family_history_yes": "family history",
-        "activity_low": "low physical activity",
-        "activity_moderate": "moderate physical activity",
-        "salt_high": "high salt intake",
-        "salt_moderate": "moderate salt intake",
-        "alcohol_high": "high alcohol intake",
-        "alcohol_moderate": "moderate alcohol intake",
-        "stress_high": "high stress",
-        "stress_moderate": "moderate stress",
-        "sleep_short": "short sleep",
-        "sleep_long": "long sleep",
+        "diabetes_yes": "Diabetes",
+        "smoking_yes": "Smoking",
+        "family_history_yes": "Family history",
+        "activity_low": "Low physical activity",
+        "activity_moderate": "Moderate physical activity",
+        "salt_high": "High salt intake",
+        "salt_moderate": "Moderate salt intake",
+        "alcohol_high": "High alcohol intake",
+        "alcohol_moderate": "Moderate alcohol intake",
+        "stress_high": "High stress",
+        "stress_moderate": "Moderate stress",
+        "sleep_short": "Short sleep",
+        "sleep_long": "Long sleep",
     }
     if name in label_map:
         return label_map[name]
