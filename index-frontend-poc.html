@@ -203,6 +203,33 @@
         linear-gradient(90deg, rgba(18, 107, 154, 0.08), rgba(21, 127, 114, 0.08));
     }
 
+    .header-layout {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .language-control {
+      flex: 0 0 180px;
+    }
+
+    .language-control label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .language-control .form-select {
+      min-height: 42px;
+      background-color: #ffffff;
+      font-weight: 650;
+    }
+
     .tool-title {
       color: var(--ink);
       font-size: clamp(1.65rem, 3vw, 2.25rem);
@@ -898,6 +925,14 @@
         flex-direction: column;
       }
 
+      .header-layout {
+        flex-direction: column;
+      }
+
+      .language-control {
+        width: 100%;
+      }
+
       .metric-grid {
         grid-template-columns: 1fr;
       }
@@ -946,10 +981,19 @@
   <main class="app-shell">
     <section class="tool-panel" aria-labelledby="pageTitle">
       <header class="tool-header">
-        <div>
-          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
-          <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
-          <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a clean frontend proof of concept.</p>
+        <div class="header-layout">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
+            <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
+            <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a clean frontend proof of concept.</p>
+          </div>
+          <div class="language-control">
+            <label for="languageSelect">Language</label>
+            <select class="form-select" id="languageSelect" aria-label="Language">
+              <option value="en">English</option>
+              <option value="ka">ქართული</option>
+            </select>
+          </div>
         </div>
       </header>
 
@@ -1270,6 +1314,7 @@
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
+    const languageSelect = document.getElementById("languageSelect");
     const APP_CONFIG = {
       riskEngine: "backend", // Options: "backend" or "browser-rules"
       backendUrl: window.location.protocol === "file:"
@@ -1277,13 +1322,113 @@
         : "/api/risk/estimate",
       enableBrowserRuleFallback: true
     };
-    const VALIDATION_MESSAGE = "Please complete all fields with valid values before calculating risk.";
+    const COPY = {
+      en: {
+        languageLabel: "Language", languageAria: "Language", languageEnglish: "English", languageGeorgian: "Georgian",
+        title: "Hypertension Risk Assessment Tool", eyebrow: "Clinical demo",
+        subtitle: "Estimate hypertension risk from common clinical and lifestyle factors with a clean frontend proof of concept.",
+        patientDetails: "Patient details", sectionNote: "Enter values to generate an estimated risk profile.",
+        validationMessage: "Please complete all fields with valid values before calculating risk.",
+        backendError: "Unable to calculate risk. Check that the backend is running or enable the browser-rule fallback.",
+        age: "Age", height: "Height", weight: "Weight", diabetes: "Diabetes", smoking: "Smoking",
+        bloodPressure: "Blood pressure", familyHistory: "Family history", physicalActivity: "Physical activity",
+        saltIntake: "Salt intake", alcoholIntake: "Alcohol intake", stressLevel: "Stress level", averageSleep: "Average sleep",
+        enterAge: "Enter age", enterHeight: "Enter height", enterFeet: "Enter feet", inches: "Inches", enterWeight: "Enter weight",
+        heightInchesAria: "Height inches", heightUnitAria: "Height unit", weightUnitAria: "Weight unit", diastolicAria: "Diastolic blood pressure",
+        selectStatus: "Select status", selectLevel: "Select level", selectIntake: "Select intake", selectSleep: "Select sleep",
+        yes: "Yes", no: "No", yesCloseRelative: "Yes, close relative", noKnownHistory: "No known history",
+        activeMostDays: "Active, most days", moderateWeekly: "Moderate, weekly", lowSedentary: "Low or sedentary",
+        low: "Low", moderate: "Moderate", high: "High", highSaltyFoods: "High or frequent salty foods",
+        none: "None", occasionalModerate: "Occasional or moderate", heavyFrequent: "Heavy or frequent", highMostDays: "High most days",
+        sleepHealthy: "7 to 9 hours", sleepShort: "Less than 6 hours", sleepLong: "More than 9 hours",
+        systolic: "Systolic", diastolic: "Diastolic", calculateRisk: "Calculate Risk",
+        estimatedRisk: "Estimated Risk", riskProgressAria: "Hypertension risk percentage",
+        lowRisk: "Low Risk", moderateRisk: "Moderate Risk", highRisk: "High Risk", waitingForInput: "Waiting for input",
+        bmi: "BMI", clinicalRiskLoad: "Clinical Risk Load", lifestyleRiskLoad: "Lifestyle Risk Load",
+        clinicalNote: "Age, BP, diabetes, history", lifestyleNote: "Smoking, activity, diet, sleep",
+        metricsAria: "Assessment metrics", infographicsAria: "Risk infographics",
+        clinicalVsLifestyle: "Clinical vs. lifestyle", clinical: "Clinical", lifestyle: "Lifestyle", bmiRange: "BMI range",
+        underweight: "Underweight", normal: "Normal", overweight: "Overweight", obesity: "Obesity",
+        bpStage: "Blood pressure stage", elevated: "Elevated", stage1: "Stage 1", stage2Plus: "Stage 2+",
+        topRiskDrivers: "Top risk drivers", riskBreakdown: "Risk contribution breakdown",
+        contributingFactors: "Contributing factors", recommendations: "Recommendations",
+        noListedRiskFactors: "No listed risk factors from the current rule output",
+        maintainHabits: "Maintain healthy lifestyle habits and routine checkups", noMajorDrivers: "No major drivers detected",
+        bmiAt: " at BMI ", bpAt: " at ",
+        footer: "This tool is for educational purposes only and not a substitute for professional medical advice."
+      },
+      ka: {
+        languageLabel: "ენა", languageAria: "ენა", languageEnglish: "English", languageGeorgian: "ქართული",
+        title: "ჰიპერტენზიის რისკის შეფასების ინსტრუმენტი", eyebrow: "კლინიკური დემო",
+        subtitle: "შეაფასეთ ჰიპერტენზიის რისკი გავრცელებული კლინიკური და ცხოვრების წესის ფაქტორებით, frontend-ის proof of concept-ით.",
+        patientDetails: "პაციენტის მონაცემები", sectionNote: "შეიყვანეთ მნიშვნელობები სავარაუდო რისკის პროფილის მისაღებად.",
+        validationMessage: "გთხოვთ, რისკის გამოთვლამდე ყველა ველი შეავსოთ სწორი მნიშვნელობებით.",
+        backendError: "რისკის გამოთვლა ვერ მოხერხდა. შეამოწმეთ, რომ backend გაშვებულია ან browser-rule fallback ჩართულია.",
+        age: "ასაკი", height: "სიმაღლე", weight: "წონა", diabetes: "დიაბეტი", smoking: "მოწევა",
+        bloodPressure: "არტერიული წნევა", familyHistory: "ოჯახური ისტორია", physicalActivity: "ფიზიკური აქტივობა",
+        saltIntake: "მარილის მიღება", alcoholIntake: "ალკოჰოლის მიღება", stressLevel: "სტრესის დონე", averageSleep: "საშუალო ძილი",
+        enterAge: "შეიყვანეთ ასაკი", enterHeight: "შეიყვანეთ სიმაღლე", enterFeet: "შეიყვანეთ ფუტი", inches: "დუიმი", enterWeight: "შეიყვანეთ წონა",
+        heightInchesAria: "სიმაღლე დუიმებში", heightUnitAria: "სიმაღლის ერთეული", weightUnitAria: "წონის ერთეული", diastolicAria: "დიასტოლური არტერიული წნევა",
+        selectStatus: "აირჩიეთ სტატუსი", selectLevel: "აირჩიეთ დონე", selectIntake: "აირჩიეთ მიღება", selectSleep: "აირჩიეთ ძილი",
+        yes: "დიახ", no: "არა", yesCloseRelative: "დიახ, ახლო ნათესავი", noKnownHistory: "ცნობილი ისტორია არ არის",
+        activeMostDays: "აქტიური, უმეტეს დღეებში", moderateWeekly: "ზომიერი, ყოველკვირეული", lowSedentary: "დაბალი ან მჯდომარე",
+        low: "დაბალი", moderate: "ზომიერი", high: "მაღალი", highSaltyFoods: "მაღალი ან ხშირი მარილიანი საკვები",
+        none: "არ არის", occasionalModerate: "იშვიათი ან ზომიერი", heavyFrequent: "მაღალი ან ხშირი", highMostDays: "მაღალი, უმეტეს დღეებში",
+        sleepHealthy: "7-დან 9 საათამდე", sleepShort: "6 საათზე ნაკლები", sleepLong: "9 საათზე მეტი",
+        systolic: "სისტოლური", diastolic: "დიასტოლური", calculateRisk: "რისკის გამოთვლა",
+        estimatedRisk: "სავარაუდო რისკი", riskProgressAria: "ჰიპერტენზიის რისკის პროცენტი",
+        lowRisk: "დაბალი რისკი", moderateRisk: "ზომიერი რისკი", highRisk: "მაღალი რისკი", waitingForInput: "ველოდებით მონაცემებს",
+        bmi: "BMI", clinicalRiskLoad: "კლინიკური რისკის დატვირთვა", lifestyleRiskLoad: "ცხოვრების წესის რისკის დატვირთვა",
+        clinicalNote: "ასაკი, წნევა, დიაბეტი, ისტორია", lifestyleNote: "მოწევა, აქტივობა, კვება, ძილი",
+        metricsAria: "შეფასების მეტრიკები", infographicsAria: "რისკის ინფოგრაფიკა",
+        clinicalVsLifestyle: "კლინიკური და ცხოვრების წესი", clinical: "კლინიკური", lifestyle: "ცხოვრების წესი", bmiRange: "BMI-ის დიაპაზონი",
+        underweight: "დაბალი წონა", normal: "ნორმა", overweight: "ჭარბი წონა", obesity: "სიმსუქნე",
+        bpStage: "არტერიული წნევის სტადია", elevated: "მომატებული", stage1: "სტადია 1", stage2Plus: "სტადია 2+",
+        topRiskDrivers: "რისკის მთავარი ფაქტორები", riskBreakdown: "რისკის წვლილის დეტალიზაცია",
+        contributingFactors: "ხელშემწყობი ფაქტორები", recommendations: "რეკომენდაციები",
+        noListedRiskFactors: "მიმდინარე წესების შედეგში რისკის ფაქტორები მითითებული არ არის",
+        maintainHabits: "შეინარჩუნეთ ჯანსაღი ცხოვრების ჩვევები და რეგულარული შემოწმება", noMajorDrivers: "მნიშვნელოვანი ფაქტორები არ გამოვლინდა",
+        bmiAt: " BMI-ით ", bpAt: " მაჩვენებლით ",
+        footer: "ეს ინსტრუმენტი განკუთვნილია მხოლოდ საგანმანათლებლო მიზნებისთვის და არ ცვლის პროფესიონალურ სამედიცინო რჩევას."
+      }
+    };
+    const PHRASES_KA = {
+      "Low Risk": "დაბალი რისკი", "Moderate Risk": "ზომიერი რისკი", "High Risk": "მაღალი რისკი",
+      "Normal range": "ნორმალური დიაპაზონი", "Below normal range": "ნორმაზე დაბალი დიაპაზონი", "Overweight range": "ჭარბი წონის დიაპაზონი", "Obesity range": "სიმსუქნის დიაპაზონი",
+      "Normal blood pressure range": "არტერიული წნევის ნორმალური დიაპაზონი", "Elevated blood pressure range": "არტერიული წნევის მომატებული დიაპაზონი", "Stage 1 hypertension range": "ჰიპერტენზიის 1-ლი სტადიის დიაპაზონი", "Stage 2 hypertension range": "ჰიპერტენზიის მე-2 სტადიის დიაპაზონი", "Hypertensive crisis range": "ჰიპერტენზიული კრიზისის დიაპაზონი",
+      "Age": "ასაკი", "Blood pressure": "არტერიული წნევა", "Medical history": "სამედიცინო ისტორია", "Lifestyle": "ცხოვრების წესი",
+      "Diabetes": "დიაბეტი", "Family history of hypertension": "ჰიპერტენზიის ოჯახური ისტორია", "Smoking": "მოწევა", "Low physical activity": "დაბალი ფიზიკური აქტივობა", "Moderate activity level": "ზომიერი აქტივობის დონე", "High sodium intake": "ნატრიუმის მაღალი მიღება", "Heavy alcohol intake": "ალკოჰოლის მაღალი მიღება", "High stress": "მაღალი სტრესი", "Short sleep duration": "მოკლე ძილის ხანგრძლივობა", "Age 60 or older": "ასაკი 60 ან მეტი", "Age over 40": "ასაკი 40-ზე მეტი",
+      "Discuss blood pressure targets with a clinician": "განიხილეთ არტერიული წნევის სამიზნე მაჩვენებლები კლინიცისტთან", "Smoking cessation support is strongly recommended": "მოწევის შეწყვეტის მხარდაჭერა მკაცრად რეკომენდებულია", "Build toward regular moderate activity": "ნელ-ნელა გადადით რეგულარულ ზომიერ აქტივობაზე", "Reduce sodium-heavy and highly processed foods": "შეამცირეთ ნატრიუმით მდიდარი და ძლიერ დამუშავებული საკვები", "Consider reducing alcohol intake": "განიხილეთ ალკოჰოლის შემცირება", "Add stress-management habits and recovery time": "დაამატეთ სტრესის მართვის ჩვევები და აღდგენის დრო", "Aim for consistent 7 to 9 hours of sleep when possible": "შეძლებისდაგვარად დაისახეთ 7-დან 9 საათამდე სტაბილური ძილი", "Monitor blood pressure regularly": "რეგულარულად აკონტროლეთ არტერიული წნევა", "Confirm readings with repeated measurements": "დაადასტურეთ მაჩვენებლები განმეორებითი გაზომვებით", "Consider weight, nutrition, and activity goals": "განიხილეთ წონის, კვებისა და აქტივობის მიზნები"
+      ,"Moderate salt intake": "მარილის ზომიერი მიღება", "Family history": "ოჯახური ისტორია", "Diastolic": "დიასტოლური", "Systolic": "სისტოლური", "Moderate stress": "ზომიერი სტრესი", "Confirm blood pressure readings with repeated measurements": "დაადასტურეთ არტერიული წნევის მაჩვენებლები განმეორებითი გაზომვებით", "Review weight, nutrition, and activity goals": "გადახედეთ წონის, კვებისა და აქტივობის მიზნებს"
+    };
+    const LOCALIZED_SELECTORS = [
+      [".language-control label", "languageLabel"], ["#pageTitle", "title"], [".tool-subtitle", "subtitle"], [".section-heading h2", "patientDetails"], [".section-note", "sectionNote"],
+      ["label[for='age']", "age"], ["label[for='height']", "height"], ["label[for='weight']", "weight"], ["label[for='diabetes']", "diabetes"], ["label[for='smoking']", "smoking"], ["label[for='systolic']", "bloodPressure"], ["label[for='familyHistory']", "familyHistory"], ["label[for='activity']", "physicalActivity"], ["label[for='saltIntake']", "saltIntake"], ["label[for='alcohol']", "alcoholIntake"], ["label[for='stress']", "stressLevel"], ["label[for='sleep']", "averageSleep"],
+      [".btn-calculate", "calculateRisk"], [".result-card .text-uppercase", "estimatedRisk"], [".meter-labels span:nth-child(1)", "low"], [".meter-labels span:nth-child(2)", "moderate"], [".meter-labels span:nth-child(3)", "high"],
+      [".metric-card:nth-child(1) .metric-label", "bmi"], [".metric-card:nth-child(2) .metric-label", "bloodPressure"], [".metric-card:nth-child(3) .metric-label", "clinicalRiskLoad"], [".metric-card:nth-child(3) .metric-note", "clinicalNote"], [".metric-card:nth-child(4) .metric-label", "lifestyleRiskLoad"], [".metric-card:nth-child(4) .metric-note", "lifestyleNote"],
+      [".infographic-grid .info-card:nth-child(1) h2", "clinicalVsLifestyle"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(1) .split-label span:first-child", "clinical"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "lifestyle"],
+      [".infographic-grid .info-card:nth-child(2) h2", "bmiRange"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "underweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "normal"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(3)", "overweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(4)", "obesity"],
+      [".infographic-grid .info-card:nth-child(3) h2", "bpStage"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(1)", "normal"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(2)", "elevated"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(3)", "stage1"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(4)", "stage2Plus"],
+      [".row.mt-2 .col-lg-4 .result-card h2", "topRiskDrivers"], [".row.mt-2 .col-lg-8 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
+    ];
+    let currentLanguage = "en";
     let displayedRisk = 0;
+    let lastAssessment = null;
+
+    languageSelect.addEventListener("change", function () {
+      currentLanguage = languageSelect.value;
+      applyLanguage();
+      if (lastAssessment) {
+        renderResults(lastAssessment);
+      }
+    });
+
+    applyLanguage();
 
     heightUnitInput.addEventListener("change", function () {
       const usesFeetAndInches = heightUnitInput.value === "ft-in";
       heightInchesInput.classList.toggle("show", usesFeetAndInches);
-      heightInput.placeholder = usesFeetAndInches ? "Enter feet" : "Enter height";
+      heightInput.placeholder = usesFeetAndInches ? t("enterFeet") : t("enterHeight");
       heightInput.step = usesFeetAndInches ? "1" : "0.1";
       heightInput.min = usesFeetAndInches ? "1" : "1";
       heightInchesInput.value = usesFeetAndInches ? heightInchesInput.value : "";
@@ -1315,7 +1460,7 @@
         age <= 0 || height <= 0 || weight <= 0 || heightInches < 0 || heightInches >= 12 ||
         systolic < 70 || systolic > 260 || diastolic < 40 || diastolic > 160 || systolic <= diastolic
       ) {
-        formAlert.textContent = VALIDATION_MESSAGE;
+        formAlert.textContent = t("validationMessage");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         return;
@@ -1326,7 +1471,7 @@
       const bmi = calculateBmi(height, heightUnit, heightInches, weight, weightUnit);
 
       if (!Number.isFinite(bmi)) {
-        formAlert.textContent = VALIDATION_MESSAGE;
+        formAlert.textContent = t("validationMessage");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         return;
@@ -1356,7 +1501,7 @@
         const assessment = await getRiskAssessment(assessmentInput);
         renderResults(assessment);
       } catch (error) {
-        formAlert.textContent = "Unable to calculate risk. Check that the backend is running or enable the browser-rule fallback.";
+        formAlert.textContent = t("backendError");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         console.error(error);
@@ -1640,6 +1785,7 @@
     }
 
     function renderResults(assessment) {
+      lastAssessment = assessment;
       const risk = assessment.risk;
       const category = getRiskCategory(risk);
 
@@ -1648,9 +1794,9 @@
       riskCategory.textContent = category.label;
       riskCategory.className = "risk-badge mt-3 " + category.className;
       bmiValue.textContent = assessment.bmi.toFixed(1);
-      bmiStatus.textContent = assessment.bmiStatus;
+      bmiStatus.textContent = translatePhrase(assessment.bmiStatus);
       bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
-      bpStatus.textContent = assessment.bpStatus;
+      bpStatus.textContent = translatePhrase(assessment.bpStatus);
       clinicalScore.textContent = "+" + assessment.clinicalTotal;
       lifestyleScore.textContent = "+" + assessment.lifestyleTotal;
 
@@ -1660,8 +1806,8 @@
 
       renderBreakdown(assessment.breakdown);
       renderInfographics(assessment);
-      renderList(factorList, assessment.factors, "No listed risk factors from the current rule output");
-      renderList(recommendationList, assessment.recommendations, "Maintain healthy lifestyle habits and routine checkups");
+      renderList(factorList, assessment.factors, t("noListedRiskFactors"));
+      renderList(recommendationList, assessment.recommendations, t("maintainHabits"));
 
       results.classList.add("show");
       results.classList.remove("highlight");
@@ -1689,7 +1835,7 @@
         top.className = "bar-top";
         track.className = "bar-track";
         fill.className = "bar-fill";
-        label.textContent = item.label;
+        label.textContent = translatePhrase(item.label);
         value.textContent = "+" + item.score;
 
         top.appendChild(label);
@@ -1716,10 +1862,10 @@
       lifestyleSplitFill.style.width = lifestyleShare + "%";
 
       bmiMarker.style.left = clamp((assessment.bmi - 15) / 25 * 100, 0, 100) + "%";
-      bmiRangeNote.textContent = assessment.bmiStatus + " at BMI " + assessment.bmi.toFixed(1);
+      bmiRangeNote.textContent = translatePhrase(assessment.bmiStatus) + t("bmiAt") + assessment.bmi.toFixed(1);
 
       bpMarker.style.left = getBloodPressureMarkerPosition(assessment.systolic, assessment.diastolic) + "%";
-      bpRangeNote.textContent = assessment.bpStatus + " at " + assessment.systolic + "/" + assessment.diastolic + " mmHg";
+      bpRangeNote.textContent = translatePhrase(assessment.bpStatus) + t("bpAt") + assessment.systolic + "/" + assessment.diastolic + " mmHg";
 
       renderTopDrivers(assessment.breakdown);
     }
@@ -1735,7 +1881,7 @@
       if (!drivers.length) {
         const li = document.createElement("li");
         li.className = "top-driver-item";
-        li.textContent = "No major drivers detected";
+        li.textContent = t("noMajorDrivers");
         topDrivers.appendChild(li);
         return;
       }
@@ -1752,7 +1898,7 @@
         name.className = "driver-name";
         score.className = "driver-score";
         rank.textContent = index + 1;
-        name.textContent = driver.label;
+        name.textContent = translatePhrase(driver.label);
         score.textContent = "+" + driver.score;
 
         li.appendChild(rank);
@@ -1815,7 +1961,7 @@
     function getRiskCategory(risk) {
       if (risk < 30) {
         return {
-          label: "Low Risk",
+          label: t("lowRisk"),
           className: "risk-low",
           progressClass: "bg-success"
         };
@@ -1823,17 +1969,99 @@
 
       if (risk <= 70) {
         return {
-          label: "Moderate Risk",
+          label: t("moderateRisk"),
           className: "risk-moderate",
           progressClass: "bg-warning"
         };
       }
 
       return {
-        label: "High Risk",
+        label: t("highRisk"),
         className: "risk-high",
         progressClass: "bg-danger"
       };
+    }
+
+    function t(key) {
+      return COPY[currentLanguage][key] || COPY.en[key] || key;
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLanguage;
+      document.title = t("title");
+      languageSelect.setAttribute("aria-label", t("languageAria"));
+      languageSelect.options[0].textContent = t("languageEnglish");
+      languageSelect.options[1].textContent = t("languageGeorgian");
+      formAlert.textContent = t("validationMessage");
+
+      LOCALIZED_SELECTORS.forEach(function (entry) {
+        const element = document.querySelector(entry[0]);
+        if (element) {
+          element.textContent = t(entry[1]);
+        }
+      });
+      document.querySelector(".eyebrow").innerHTML = '<span class="eyebrow-dot" aria-hidden="true"></span>' + t("eyebrow");
+
+      setPlaceholder("age", t("enterAge"));
+      setPlaceholder("height", heightUnitInput.value === "ft-in" ? t("enterFeet") : t("enterHeight"));
+      setPlaceholder("heightInches", t("inches"));
+      setPlaceholder("weight", t("enterWeight"));
+      setPlaceholder("systolic", t("systolic"));
+      setPlaceholder("diastolic", t("diastolic"));
+      heightInchesInput.setAttribute("aria-label", t("heightInchesAria"));
+      heightUnitInput.setAttribute("aria-label", t("heightUnitAria"));
+      document.getElementById("weightUnit").setAttribute("aria-label", t("weightUnitAria"));
+      document.getElementById("diastolic").setAttribute("aria-label", t("diastolicAria"));
+      riskProgress.parentElement.setAttribute("aria-label", t("riskProgressAria"));
+      document.querySelector(".metric-grid").setAttribute("aria-label", t("metricsAria"));
+      document.querySelector(".infographic-grid").setAttribute("aria-label", t("infographicsAria"));
+
+      setOptionText("diabetes", ["selectStatus", "yes", "no"]);
+      setOptionText("smoking", ["selectStatus", "yes", "no"]);
+      setOptionText("familyHistory", ["selectStatus", "yesCloseRelative", "noKnownHistory"]);
+      setOptionText("activity", ["selectLevel", "activeMostDays", "moderateWeekly", "lowSedentary"]);
+      setOptionText("saltIntake", ["selectIntake", "low", "moderate", "highSaltyFoods"]);
+      setOptionText("alcohol", ["selectIntake", "none", "occasionalModerate", "heavyFrequent"]);
+      setOptionText("stress", ["selectLevel", "low", "moderate", "highMostDays"]);
+      setOptionText("sleep", ["selectSleep", "sleepHealthy", "sleepShort", "sleepLong"]);
+
+      if (!results.classList.contains("show")) {
+        riskCategory.textContent = t("lowRisk");
+        bmiStatus.textContent = t("waitingForInput");
+        bpStatus.textContent = t("waitingForInput");
+        bmiRangeNote.textContent = t("waitingForInput");
+        bpRangeNote.textContent = t("waitingForInput");
+      }
+    }
+
+    function setPlaceholder(id, value) {
+      document.getElementById(id).placeholder = value;
+    }
+
+    function setOptionText(id, translationKeys) {
+      const options = document.getElementById(id).options;
+      translationKeys.forEach(function (key, index) {
+        if (options[index]) {
+          options[index].textContent = t(key);
+        }
+      });
+    }
+
+    function translatePhrase(phrase) {
+      if (!phrase || currentLanguage === "en") {
+        return phrase;
+      }
+
+      if (PHRASES_KA[phrase]) {
+        return PHRASES_KA[phrase];
+      }
+
+      const bmiMatch = phrase.match(/^(.*) BMI \((.*)\)$/);
+      if (bmiMatch && PHRASES_KA[bmiMatch[1]]) {
+        return PHRASES_KA[bmiMatch[1]] + " BMI (" + bmiMatch[2] + ")";
+      }
+
+      return phrase;
     }
 
     function renderList(listElement, items, emptyText) {
@@ -1842,7 +2070,7 @@
 
       visibleItems.forEach(function (item) {
         const li = document.createElement("li");
-        li.textContent = capitalizeListItem(item);
+        li.textContent = capitalizeListItem(translatePhrase(item));
         listElement.appendChild(li);
       });
     }
