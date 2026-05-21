@@ -577,12 +577,17 @@
     }
 
     .metric-card {
-      min-height: 102px;
-      padding: 16px;
+      padding: 12px 16px;
       border: 1px solid #e2ebf1;
       border-radius: 8px;
       background: #ffffff;
       animation: cardRise 540ms ease both;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .metric-card:hover {
+      box-shadow: 0 14px 28px rgba(35, 56, 77, 0.08);
+      transform: translateY(-2px);
     }
 
     .metric-label {
@@ -661,6 +666,12 @@
       border-radius: 8px;
       background: #ffffff;
       animation: cardRise 540ms ease both;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .info-card:hover {
+      box-shadow: 0 14px 28px rgba(35, 56, 77, 0.08);
+      transform: translateY(-2px);
     }
 
     .info-card h2 {
@@ -747,7 +758,7 @@
 
     .top-driver-item {
       display: grid;
-      grid-template-columns: 28px 1fr auto;
+      grid-template-columns: 28px 1fr;
       gap: 10px;
       align-items: center;
       padding: 10px;
@@ -771,12 +782,6 @@
 
     .driver-name {
       color: #314554;
-      font-weight: 720;
-    }
-
-    .driver-score {
-      color: var(--muted);
-      font-size: 0.86rem;
       font-weight: 720;
     }
 
@@ -1204,12 +1209,10 @@
           </div>
           <div class="metric-card">
             <span class="metric-label">Clinical Risk Load</span>
-            <span id="clinicalScore" class="metric-value">0</span>
             <span class="metric-note">Age, BP, diabetes, history</span>
           </div>
           <div class="metric-card">
             <span class="metric-label">Lifestyle Risk Load</span>
-            <span id="lifestyleScore" class="metric-value">0</span>
             <span class="metric-note">Smoking, activity, diet, sleep</span>
           </div>
         </div>
@@ -1316,8 +1319,6 @@
     const bmiStatus = document.getElementById("bmiStatus");
     const bpValue = document.getElementById("bpValue");
     const bpStatus = document.getElementById("bpStatus");
-    const clinicalScore = document.getElementById("clinicalScore");
-    const lifestyleScore = document.getElementById("lifestyleScore");
     const breakdownChart = document.getElementById("breakdownChart");
     const clinicalPercent = document.getElementById("clinicalPercent");
     const lifestylePercent = document.getElementById("lifestylePercent");
@@ -1814,8 +1815,6 @@
       bmiStatus.textContent = translatePhrase(assessment.bmiStatus);
       bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
       bpStatus.textContent = translatePhrase(assessment.bpStatus);
-      clinicalScore.textContent = "+" + assessment.clinicalTotal;
-      lifestyleScore.textContent = "+" + assessment.lifestyleTotal;
 
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
@@ -1843,7 +1842,6 @@
         const row = document.createElement("div");
         const top = document.createElement("div");
         const label = document.createElement("span");
-        const value = document.createElement("span");
         const track = document.createElement("div");
         const fill = document.createElement("div");
 
@@ -1853,10 +1851,8 @@
         track.className = "bar-track";
         fill.className = "bar-fill";
         label.textContent = translatePhrase(item.label);
-        value.textContent = "+" + item.score;
 
         top.appendChild(label);
-        top.appendChild(value);
         track.appendChild(fill);
         row.appendChild(top);
         row.appendChild(track);
@@ -1907,20 +1903,16 @@
         const li = document.createElement("li");
         const rank = document.createElement("span");
         const name = document.createElement("span");
-        const score = document.createElement("span");
 
         li.className = "top-driver-item";
         li.style.animationDelay = (index * 70) + "ms";
         rank.className = "driver-rank";
         name.className = "driver-name";
-        score.className = "driver-score";
         rank.textContent = index + 1;
         name.textContent = translatePhrase(driver.label);
-        score.textContent = "+" + driver.score;
 
         li.appendChild(rank);
         li.appendChild(name);
-        li.appendChild(score);
         topDrivers.appendChild(li);
       });
     }
