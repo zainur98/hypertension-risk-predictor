@@ -1834,7 +1834,6 @@
         const row = document.createElement("div");
         const top = document.createElement("div");
         const label = document.createElement("span");
-        const value = document.createElement("span");
         const track = document.createElement("div");
         const fill = document.createElement("div");
 
@@ -1844,10 +1843,8 @@
         track.className = "bar-track";
         fill.className = "bar-fill";
         label.textContent = translatePhrase(item.label);
-        value.textContent = "+" + item.score;
 
         top.appendChild(label);
-        top.appendChild(value);
         track.appendChild(fill);
         row.appendChild(top);
         row.appendChild(track);
@@ -1898,20 +1895,16 @@
         const li = document.createElement("li");
         const rank = document.createElement("span");
         const name = document.createElement("span");
-        const score = document.createElement("span");
 
         li.className = "top-driver-item";
         li.style.animationDelay = (index * 70) + "ms";
         rank.className = "driver-rank";
         name.className = "driver-name";
-        score.className = "driver-score";
         rank.textContent = index + 1;
         name.textContent = translatePhrase(driver.label);
-        score.textContent = "+" + driver.score;
 
         li.appendChild(rank);
         li.appendChild(name);
-        li.appendChild(score);
         topDrivers.appendChild(li);
       });
     }
