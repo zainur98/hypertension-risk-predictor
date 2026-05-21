@@ -1204,12 +1204,10 @@
           </div>
           <div class="metric-card">
             <span class="metric-label">Clinical Risk Load</span>
-            <span id="clinicalScore" class="metric-value">0</span>
             <span class="metric-note">Age, BP, diabetes, history</span>
           </div>
           <div class="metric-card">
             <span class="metric-label">Lifestyle Risk Load</span>
-            <span id="lifestyleScore" class="metric-value">0</span>
             <span class="metric-note">Smoking, activity, diet, sleep</span>
           </div>
         </div>
@@ -1316,8 +1314,6 @@
     const bmiStatus = document.getElementById("bmiStatus");
     const bpValue = document.getElementById("bpValue");
     const bpStatus = document.getElementById("bpStatus");
-    const clinicalScore = document.getElementById("clinicalScore");
-    const lifestyleScore = document.getElementById("lifestyleScore");
     const breakdownChart = document.getElementById("breakdownChart");
     const clinicalPercent = document.getElementById("clinicalPercent");
     const lifestylePercent = document.getElementById("lifestylePercent");
@@ -1814,8 +1810,6 @@
       bmiStatus.textContent = translatePhrase(assessment.bmiStatus);
       bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
       bpStatus.textContent = translatePhrase(assessment.bpStatus);
-      clinicalScore.textContent = "+" + assessment.clinicalTotal;
-      lifestyleScore.textContent = "+" + assessment.lifestyleTotal;
 
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
