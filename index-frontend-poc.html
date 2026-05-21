@@ -543,13 +543,30 @@
     }
 
     .meter-labels {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
+      position: relative;
       margin-top: 10px;
       color: var(--muted);
       font-size: 0.82rem;
       font-weight: 650;
+      height: 1.2em;
+    }
+
+    .meter-labels span {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+
+    .meter-labels span:first-child {
+      left: 0%;
+      transform: translateX(0);
+    }
+
+    .meter-labels span:nth-child(2) {
+      left: 30%;
+    }
+
+    .meter-labels span:last-child {
+      left: 70%;
     }
 
     .metric-grid {
