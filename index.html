@@ -666,6 +666,12 @@
       border-radius: 8px;
       background: #ffffff;
       animation: cardRise 540ms ease both;
+      transition: box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .info-card:hover {
+      box-shadow: 0 14px 28px rgba(35, 56, 77, 0.08);
+      transform: translateY(-2px);
     }
 
     .info-card h2 {
