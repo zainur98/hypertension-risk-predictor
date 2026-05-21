@@ -41,7 +41,7 @@ These were identified and agreed on — none implemented yet:
 
 2. ~~**Progress bar label alignment** — "Low / Moderate / High" labels are evenly spaced, implying thresholds at 33%/67%. Actual thresholds are 30%/70%. Labels or tick marks should sit at the correct positions.~~ **Done** — labels now positioned at 0%, 30%, 70% in both `index.html` and `index-frontend-poc.html`.
 
-3. **Clinical/Lifestyle score cards** — the metric cards show raw scores (`+5`) with no maximum, which is meaningless to a user. Either show as `5 / 10` or remove raw numbers and let the split bars carry the story.
+3. ~~**Clinical/Lifestyle score cards** — the metric cards show raw scores (`+5`) with no maximum, which is meaningless to a user. Either show as `5 / 10` or remove raw numbers and let the split bars carry the story.~~ **Done** — removed raw scores from both `index.html` and `index-frontend-poc.html`; the split bars carry the story.
 
 4. **Form layout on large screens** — currently 2-column (6 rows). At 1040px wide there's room for 3 columns, which would cut form height by ~a third.
 
