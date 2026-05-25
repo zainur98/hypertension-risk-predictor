@@ -96,7 +96,7 @@
       margin-top: 0;
       font-size: 1.25rem;
       line-height: 1.2;
-      font-weight: 650;
+      font-weight: 600;
     }
 
     .input-group {
@@ -135,7 +135,7 @@
       border-radius: 0 8px 8px 0;
       background: #eef4f7;
       color: var(--muted);
-      font-weight: 650;
+      font-weight: 600;
     }
 
     .btn {
@@ -219,7 +219,7 @@
       margin-bottom: 6px;
       color: var(--muted);
       font-size: 0.78rem;
-      font-weight: 760;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
@@ -227,13 +227,13 @@
     .language-control .form-select {
       min-height: 42px;
       background-color: #ffffff;
-      font-weight: 650;
+      font-weight: 600;
     }
 
     .tool-title {
       color: var(--ink);
       font-size: clamp(1.65rem, 3vw, 2.25rem);
-      font-weight: 760;
+      font-weight: 700;
       line-height: 1.12;
       margin: 0;
       letter-spacing: 0;
@@ -257,7 +257,7 @@
       background: rgba(18, 107, 154, 0.08);
       color: #0e5e84;
       font-size: 0.78rem;
-      font-weight: 750;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
@@ -287,7 +287,7 @@
     .section-heading h2 {
       margin: 0;
       font-size: 1rem;
-      font-weight: 760;
+      font-weight: 700;
       color: var(--ink);
     }
 
@@ -299,7 +299,7 @@
 
     label {
       display: inline-block;
-      font-weight: 650;
+      font-weight: 600;
       color: #2b3d4c;
       margin-bottom: 8px;
     }
@@ -436,6 +436,33 @@
       transform: translateY(0) scale(0.99);
     }
 
+    .btn-calculate:disabled {
+      opacity: 0.82;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 8px 16px rgba(18, 107, 154, 0.15);
+    }
+
+    .btn-calculate:disabled::after {
+      display: none;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: btnSpin 600ms linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    @keyframes btnSpin {
+      to { transform: rotate(360deg); }
+    }
+
     .result-section {
       border-top: 1px solid var(--line);
       background:
@@ -460,7 +487,7 @@
 
     .risk-number {
       font-size: clamp(2.25rem, 8vw, 4.25rem);
-      font-weight: 820;
+      font-weight: 800;
       line-height: 1;
       margin: 0;
     }
@@ -471,7 +498,7 @@
       min-height: 34px;
       padding: 6px 12px;
       border-radius: 999px;
-      font-weight: 750;
+      font-weight: 700;
       color: #ffffff;
       animation: badgePop 420ms ease both;
     }
@@ -547,7 +574,7 @@
       margin-top: 10px;
       color: var(--muted);
       font-size: 0.82rem;
-      font-weight: 650;
+      font-weight: 600;
       height: 1.2em;
     }
 
@@ -594,7 +621,7 @@
       display: block;
       color: var(--muted);
       font-size: 0.76rem;
-      font-weight: 760;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
@@ -690,7 +717,7 @@
       gap: 12px;
       color: #314554;
       font-size: 0.9rem;
-      font-weight: 730;
+      font-weight: 700;
     }
 
     .split-track,
@@ -745,7 +772,7 @@
       margin-top: 14px;
       color: var(--muted);
       font-size: 0.72rem;
-      font-weight: 680;
+      font-weight: 700;
     }
 
     .top-driver-list {
@@ -782,7 +809,7 @@
 
     .driver-name {
       color: #314554;
-      font-weight: 720;
+      font-weight: 700;
     }
 
     .height-inches-input {
@@ -1037,18 +1064,18 @@
         </div>
 
         <div class="row g-3">
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="age" class="form-label">Age</label>
-              <input type="number" class="form-control" id="age" min="1" max="120" placeholder="Enter age">
+              <input type="number" class="form-control" id="age" min="18" max="100" placeholder="Enter age">
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="height" class="form-label">Height</label>
               <div class="input-group">
-                <input type="number" class="form-control" id="height" min="1" step="0.1" placeholder="Enter height">
+                <input type="number" class="form-control" id="height" min="100" max="250" step="0.1" placeholder="Enter height">
                 <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11" step="0.1" placeholder="Inches" aria-label="Height inches">
                 <select class="form-select" id="heightUnit" aria-label="Height unit">
                   <option value="cm">cm</option>
@@ -1058,11 +1085,11 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="weight" class="form-label">Weight</label>
               <div class="input-group">
-                <input type="number" class="form-control" id="weight" min="1" step="0.1" placeholder="Enter weight">
+                <input type="number" class="form-control" id="weight" min="20" max="300" step="0.1" placeholder="Enter weight">
                 <select class="form-select" id="weightUnit" aria-label="Weight unit">
                   <option value="kg">kg</option>
                   <option value="lbs">lbs</option>
@@ -1071,7 +1098,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="diabetes" class="form-label">Diabetes</label>
               <select class="form-select" id="diabetes">
@@ -1082,7 +1109,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="smoking" class="form-label">Smoking</label>
               <select class="form-select" id="smoking">
@@ -1093,7 +1120,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="systolic" class="form-label">Blood pressure</label>
               <div class="input-group">
@@ -1104,9 +1131,9 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
-              <label for="familyHistory" class="form-label">Family history</label>
+              <label for="familyHistory" class="form-label">Family history of hypertension</label>
               <select class="form-select" id="familyHistory">
                 <option value="">Select status</option>
                 <option value="yes">Yes, close relative</option>
@@ -1115,7 +1142,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="activity" class="form-label">Physical activity</label>
               <select class="form-select" id="activity">
@@ -1127,7 +1154,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="saltIntake" class="form-label">Salt intake</label>
               <select class="form-select" id="saltIntake">
@@ -1139,7 +1166,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="alcohol" class="form-label">Alcohol intake</label>
               <select class="form-select" id="alcohol">
@@ -1151,7 +1178,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="stress" class="form-label">Stress level</label>
               <select class="form-select" id="stress">
@@ -1163,7 +1190,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 col-lg-4">
             <div class="field-shell">
               <label for="sleep" class="form-label">Average sleep</label>
               <select class="form-select" id="sleep">
@@ -1215,12 +1242,14 @@
             <span id="bpStatus" class="metric-note">Waiting for input</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Clinical Risk Load</span>
-            <span class="metric-note">Age, BP, diabetes, history</span>
+            <span class="metric-label">Pulse Pressure</span>
+            <span id="ppValue" class="metric-value">--</span>
+            <span id="ppStatus" class="metric-note">Waiting for input</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Lifestyle Risk Load</span>
-            <span class="metric-note">Smoking, activity, diet, sleep</span>
+            <span class="metric-label">Top Risk Driver</span>
+            <span id="topDriverValue" class="metric-value">--</span>
+            <span id="topDriverNote" class="metric-note">Waiting for input</span>
           </div>
         </div>
 
@@ -1335,6 +1364,10 @@
     const bpValue = document.getElementById("bpValue");
     const bpStatus = document.getElementById("bpStatus");
     const breakdownChart = document.getElementById("breakdownChart");
+    const ppValue = document.getElementById("ppValue");
+    const ppStatus = document.getElementById("ppStatus");
+    const topDriverValue = document.getElementById("topDriverValue");
+    const topDriverNote = document.getElementById("topDriverNote");
     const clinicalPercent = document.getElementById("clinicalPercent");
     const lifestylePercent = document.getElementById("lifestylePercent");
     const clinicalSplitFill = document.getElementById("clinicalSplitFill");
@@ -1349,6 +1382,9 @@
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
+    const weightInput = document.getElementById("weight");
+    const weightUnitInput = document.getElementById("weightUnit");
+    const submitBtn = form.querySelector(".btn-calculate");
     const languageSelect = document.getElementById("languageSelect");
     const APP_CONFIG = {
       backendUrl: window.location.protocol === "file:"
@@ -1374,7 +1410,7 @@
         diabetes: "Diabetes",
         smoking: "Smoking",
         bloodPressure: "Blood pressure",
-        familyHistory: "Family history",
+        familyHistory: "Family history of hypertension",
         physicalActivity: "Physical activity",
         saltIntake: "Salt intake",
         alcoholIntake: "Alcohol intake",
@@ -1413,6 +1449,7 @@
         systolic: "Systolic",
         diastolic: "Diastolic",
         calculateRisk: "Calculate Risk",
+        calculating: "Calculating…",
         estimatedRisk: "Estimated Risk",
         riskProgressAria: "Hypertension risk percentage",
         lowRisk: "Low Risk",
@@ -1420,6 +1457,12 @@
         highRisk: "High Risk",
         high: "High",
         waitingForInput: "Waiting for input",
+        pulsePressure: "Pulse Pressure",
+        ppNormal: "Normal (<40 mmHg)",
+        ppElevated: "Elevated (40–60 mmHg)",
+        ppWide: "Wide (>60 mmHg)",
+        topRiskDriver: "Top Risk Driver",
+        highestContributingGroup: "Highest contributing group",
         bmi: "BMI",
         clinicalRiskLoad: "Clinical Risk Load",
         lifestyleRiskLoad: "Lifestyle Risk Load",
@@ -1473,7 +1516,7 @@
         diabetes: "დიაბეტი",
         smoking: "მოწევა",
         bloodPressure: "არტერიული წნევა",
-        familyHistory: "ოჯახური ისტორია",
+        familyHistory: "ჰიპერტენზიის ოჯახური ისტორია",
         physicalActivity: "ფიზიკური აქტივობა",
         saltIntake: "მარილის მიღება",
         alcoholIntake: "ალკოჰოლის მიღება",
@@ -1512,6 +1555,7 @@
         systolic: "სისტოლური",
         diastolic: "დიასტოლური",
         calculateRisk: "რისკის გამოთვლა",
+        calculating: "გამოითვლება…",
         estimatedRisk: "სავარაუდო რისკი",
         riskProgressAria: "ჰიპერტენზიის რისკის პროცენტი",
         lowRisk: "დაბალი რისკი",
@@ -1519,6 +1563,12 @@
         highRisk: "მაღალი რისკი",
         high: "მაღალი",
         waitingForInput: "ველოდებით მონაცემებს",
+        pulsePressure: "პულსური წნევა",
+        ppNormal: "ნორმა (<40 მმHg)",
+        ppElevated: "მომატებული (40–60 მმHg)",
+        ppWide: "განიერი (>60 მმHg)",
+        topRiskDriver: "მთავარი რისკ-ფაქტორი",
+        highestContributingGroup: "ყველაზე მაღალი წვლილის ჯგუფი",
         bmi: "BMI",
         clinicalRiskLoad: "კლინიკური რისკის დატვირთვა",
         lifestyleRiskLoad: "ცხოვრების წესის რისკის დატვირთვა",
@@ -1575,31 +1625,27 @@
         "Medical history": "სამედიცინო ისტორია",
         "Lifestyle": "ცხოვრების წესი",
         "Diabetes": "დიაბეტი",
-        "Family history of hypertension": "ჰიპერტენზიის ოჯახური ისტორია",
         "Smoking": "მოწევა",
+        "Family history": "ოჯახური ისტორია",
         "Low physical activity": "დაბალი ფიზიკური აქტივობა",
-        "Moderate activity level": "ზომიერი აქტივობის დონე",
-        "High sodium intake": "ნატრიუმის მაღალი მიღება",
-        "Heavy alcohol intake": "ალკოჰოლის მაღალი მიღება",
+        "Moderate physical activity": "ზომიერი ფიზიკური აქტივობა",
+        "High salt intake": "მარილის მაღალი მიღება",
+        "Moderate salt intake": "მარილის ზომიერი მიღება",
+        "High alcohol intake": "ალკოჰოლის მაღალი მიღება",
+        "Moderate alcohol intake": "ალკოჰოლის ზომიერი მიღება",
         "High stress": "მაღალი სტრესი",
-        "Short sleep duration": "მოკლე ძილის ხანგრძლივობა",
-        "Age 60 or older": "ასაკი 60 ან მეტი",
-        "Age over 40": "ასაკი 40-ზე მეტი",
+        "Moderate stress": "ზომიერი სტრესი",
+        "Short sleep": "მოკლე ძილი",
+        "Long sleep": "გრძელი ძილი",
+        "Diastolic": "დიასტოლური",
+        "Systolic": "სისტოლური",
         "Discuss blood pressure targets with a clinician": "განიხილეთ არტერიული წნევის სამიზნე მაჩვენებლები კლინიცისტთან",
         "Smoking cessation support is strongly recommended": "მოწევის შეწყვეტის მხარდაჭერა მკაცრად რეკომენდებულია",
         "Build toward regular moderate activity": "ნელ-ნელა გადადით რეგულარულ ზომიერ აქტივობაზე",
         "Reduce sodium-heavy and highly processed foods": "შეამცირეთ ნატრიუმით მდიდარი და ძლიერ დამუშავებული საკვები",
         "Consider reducing alcohol intake": "განიხილეთ ალკოჰოლის შემცირება",
         "Add stress-management habits and recovery time": "დაამატეთ სტრესის მართვის ჩვევები და აღდგენის დრო",
-        "Aim for consistent 7 to 9 hours of sleep when possible": "შეძლებისდაგვარად დაისახეთ 7-დან 9 საათამდე სტაბილური ძილი",
-        "Monitor blood pressure regularly": "რეგულარულად აკონტროლეთ არტერიული წნევა",
-        "Confirm readings with repeated measurements": "დაადასტურეთ მაჩვენებლები განმეორებითი გაზომვებით",
-        "Consider weight, nutrition, and activity goals": "განიხილეთ წონის, კვებისა და აქტივობის მიზნები",
-        "Moderate salt intake": "მარილის ზომიერი მიღება",
-        "Family history": "ოჯახური ისტორია",
-        "Diastolic": "დიასტოლური",
-        "Systolic": "სისტოლური",
-        "Moderate stress": "ზომიერი სტრესი",
+        "Aim for a consistent 7 to 9 hours of sleep when possible": "შეძლებისდაგვარად დაისახეთ 7-დან 9 საათამდე სტაბილური ძილი",
         "Confirm blood pressure readings with repeated measurements": "დაადასტურეთ არტერიული წნევის მაჩვენებლები განმეორებითი გაზომვებით",
         "Review weight, nutrition, and activity goals": "გადახედეთ წონის, კვებისა და აქტივობის მიზნებს"
       }
@@ -1630,13 +1676,11 @@
       [".meter-labels span:nth-child(3)", "high"],
       [".metric-card:nth-child(1) .metric-label", "bmi"],
       [".metric-card:nth-child(2) .metric-label", "bloodPressure"],
-      [".metric-card:nth-child(3) .metric-label", "clinicalRiskLoad"],
-      [".metric-card:nth-child(3) .metric-note", "clinicalNote"],
-      [".metric-card:nth-child(4) .metric-label", "lifestyleRiskLoad"],
-      [".metric-card:nth-child(4) .metric-note", "lifestyleNote"],
+      [".metric-card:nth-child(3) .metric-label", "pulsePressure"],
+      [".metric-card:nth-child(4) .metric-label", "topRiskDriver"],
       [".infographic-grid .info-card:nth-child(1) h2", "clinicalVsLifestyle"],
-      [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(1) .split-label span:first-child", "clinical"],
-      [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "lifestyle"],
+      [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "clinical"],
+      [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(3) .split-label span:first-child", "lifestyle"],
       [".infographic-grid .info-card:nth-child(2) h2", "bmiRange"],
       [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "underweight"],
       [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "normal"],
@@ -1649,7 +1693,6 @@
       [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(4)", "stage2Plus"],
       [".row.mt-2 .result-card h2", "topRiskDrivers"],
       [".row.mt-2 .col-lg-8 .result-card h2", "riskBreakdown"],
-      ["#plainLanguageSummary + .metric-note", "localExplanation"],
       [".row.mt-2 .col-12:nth-child(3) .result-card h2", "plainSummary"],
       [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "contributingFactors"],
       [".row.mt-2 .col-md-6:nth-child(5) .result-card h2", "recommendations"],
@@ -1674,8 +1717,15 @@
       heightInchesInput.classList.toggle("show", usesFeetAndInches);
       heightInput.placeholder = usesFeetAndInches ? t("enterFeet") : t("enterHeight");
       heightInput.step = usesFeetAndInches ? "1" : "0.1";
-      heightInput.min = usesFeetAndInches ? "1" : "1";
+      heightInput.min = usesFeetAndInches ? "3" : "100";
+      heightInput.max = usesFeetAndInches ? "8" : "250";
       heightInchesInput.value = usesFeetAndInches ? heightInchesInput.value : "";
+    });
+
+    weightUnitInput.addEventListener("change", function () {
+      const usesLbs = weightUnitInput.value === "lbs";
+      weightInput.min = usesLbs ? "44" : "20";
+      weightInput.max = usesLbs ? "660" : "300";
     });
 
     form.addEventListener("submit", async function (event) {
@@ -1698,10 +1748,18 @@
       const stress = document.getElementById("stress").value;
       const sleep = document.getElementById("sleep").value;
 
+      const heightMin = heightUnit === "ft-in" ? 3 : 100;
+      const heightMax = heightUnit === "ft-in" ? 8 : 250;
+      const weightMin = weightUnit === "kg" ? 20 : 44;
+      const weightMax = weightUnit === "kg" ? 300 : 660;
+
       if (
         !age || !height || !weight || !diabetes || !smoking || !systolic || !diastolic ||
         !familyHistory || !activity || !saltIntake || !alcohol || !stress || !sleep ||
-        age <= 0 || height <= 0 || weight <= 0 || heightInches < 0 || heightInches >= 12 ||
+        age < 18 || age > 100 ||
+        height < heightMin || height > heightMax ||
+        heightInches < 0 || heightInches >= 12 ||
+        weight < weightMin || weight > weightMax ||
         systolic < 70 || systolic > 260 || diastolic < 40 || diastolic > 160 || systolic <= diastolic
       ) {
         formAlert.textContent = t("validationMessage");
@@ -1731,6 +1789,9 @@
         sleep
       };
 
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span>' + t("calculating");
+
       try {
         const assessment = await requestBackendAssessment(assessmentInput);
         renderResults(assessment);
@@ -1739,6 +1800,9 @@
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
         console.error(error);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = t("calculateRisk");
       }
     });
 
@@ -1811,6 +1875,14 @@
       bpValue.textContent = assessment.systolic + "/" + assessment.diastolic;
       bpStatus.textContent = translatePhrase(assessment.bpStatus);
 
+      const pp = assessment.systolic - assessment.diastolic;
+      ppValue.textContent = pp + " mmHg";
+      ppStatus.textContent = getPulsePressureStatus(pp);
+
+      const topDriver = assessment.breakdown.reduce(function(a, b) { return b.score > a.score ? b : a; });
+      topDriverValue.textContent = translatePhrase(topDriver.label);
+      topDriverNote.textContent = t("highestContributingGroup");
+
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
       riskProgress.parentElement.setAttribute("aria-valuenow", String(risk));
@@ -1831,9 +1903,7 @@
 
     function renderBreakdown(breakdown) {
       breakdownChart.innerHTML = "";
-      const maxScore = Math.max.apply(null, breakdown.map(function (item) {
-        return item.score;
-      })) || 1;
+      const totalScore = breakdown.reduce(function (sum, item) { return sum + item.score; }, 0) || 1;
 
       breakdown.forEach(function (item, index) {
         const row = document.createElement("div");
@@ -1856,7 +1926,7 @@
         breakdownChart.appendChild(row);
 
         requestAnimationFrame(function () {
-          fill.style.width = item.score / maxScore * 100 + "%";
+          fill.style.width = item.score / totalScore * 100 + "%";
         });
       });
     }
@@ -1864,7 +1934,7 @@
     function renderInfographics(assessment) {
       const combinedScore = assessment.clinicalTotal + assessment.lifestyleTotal || 1;
       const clinicalShare = Math.round(assessment.clinicalTotal / combinedScore * 100);
-      const lifestyleShare = Math.round(assessment.lifestyleTotal / combinedScore * 100);
+      const lifestyleShare = 100 - clinicalShare;
 
       clinicalPercent.textContent = clinicalShare + "%";
       lifestylePercent.textContent = lifestyleShare + "%";
@@ -1914,24 +1984,33 @@
       });
     }
 
+    function getPulsePressureStatus(pp) {
+      if (pp < 40) return t("ppNormal");
+      if (pp <= 60) return t("ppElevated");
+      return t("ppWide");
+    }
+
     function getBloodPressureMarkerPosition(systolic, diastolic) {
-      if (systolic >= 180 || diastolic >= 120) {
-        return 96;
+      // Piecewise linear: zone boundaries align with bar labels at 25/50/75%
+      // Normal <120 → 0–25%, Elevated 120–129 → 25–50%, Stage 1 130–139 → 50–75%, Stage 2+ ≥140 → 75–97%
+      let sPos;
+      if (systolic < 120) {
+        sPos = clamp((systolic - 70) / 50, 0, 1) * 25;
+      } else if (systolic < 130) {
+        sPos = 25 + (systolic - 120) / 10 * 25;
+      } else if (systolic < 140) {
+        sPos = 50 + (systolic - 130) / 10 * 25;
+      } else {
+        sPos = Math.min(75 + (systolic - 140) / 120 * 22, 97);
       }
 
-      if (systolic >= 140 || diastolic >= 90) {
-        return 82;
-      }
+      // Diastolic floor: if diastolic alone warrants a higher zone, honour it
+      let dFloor = 0;
+      if (diastolic >= 120) dFloor = 97;
+      else if (diastolic >= 90) dFloor = 75;
+      else if (diastolic >= 80) dFloor = 50;
 
-      if (systolic >= 130 || diastolic >= 80) {
-        return 60;
-      }
-
-      if (systolic >= 120) {
-        return 36;
-      }
-
-      return 12;
+      return Math.max(sPos, dFloor);
     }
 
     function clamp(value, min, max) {
@@ -1998,7 +2077,9 @@
       languageSelect.setAttribute("aria-label", t("languageAria"));
       languageSelect.options[0].textContent = t("languageEnglish");
       languageSelect.options[1].textContent = t("languageGeorgian");
-      formAlert.textContent = t("validationMessage");
+      if (formAlert.classList.contains("d-none")) {
+        formAlert.textContent = t("validationMessage");
+      }
 
       LOCALIZED_SELECTORS.forEach(function (entry) {
         const element = document.querySelector(entry[0]);
@@ -2035,11 +2116,16 @@
         riskCategory.textContent = t("lowRisk");
         bmiStatus.textContent = t("waitingForInput");
         bpStatus.textContent = t("waitingForInput");
+        ppStatus.textContent = t("waitingForInput");
+        topDriverNote.textContent = t("waitingForInput");
         bmiRangeNote.textContent = t("waitingForInput");
         bpRangeNote.textContent = t("waitingForInput");
         if (plainLanguageSummary.textContent === TRANSLATIONS.en.waitingForInput || plainLanguageSummary.textContent === TRANSLATIONS.ka.waitingForInput) {
           plainLanguageSummary.textContent = t("waitingForInput");
         }
+        plainLanguageSource.textContent = t("localExplanation");
+      } else if (lastAssessment) {
+        plainLanguageSource.textContent = getExplanationSourceLabel(lastAssessment);
       }
     }
 
@@ -2063,11 +2149,6 @@
 
       if (PHRASE_TRANSLATIONS[currentLanguage] && PHRASE_TRANSLATIONS[currentLanguage][phrase]) {
         return PHRASE_TRANSLATIONS[currentLanguage][phrase];
-      }
-
-      const bmiMatch = phrase.match(/^(.*) BMI \((.*)\)$/);
-      if (bmiMatch && PHRASE_TRANSLATIONS[currentLanguage][bmiMatch[1]]) {
-        return PHRASE_TRANSLATIONS[currentLanguage][bmiMatch[1]] + " BMI (" + bmiMatch[2] + ")";
       }
 
       return phrase;

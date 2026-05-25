@@ -4,10 +4,12 @@
 
 A single-page clinical decision support demo that estimates a patient's hypertension risk within 5 years. Not a validated medical tool — trained on synthetic data to prove the engineering flow.
 
-- **Frontend:** `index.html` — vanilla HTML/CSS/JS, zero dependencies, ~2100 lines
+- **Frontend:** `index.html` — vanilla HTML/CSS/JS, zero dependencies, ~2100 lines. The live, model-backed version served by the backend.
 - **Backend:** `backend/app.py` — Python standard library HTTP server, no frameworks
 - **Model:** `backend/models/model-v1.json` — logistic regression trained on `backend/data/test_patients.csv`
-- **POC frontend:** `index-frontend-poc.html` — older version with browser-side rule-based scoring
+- **POC frontend:** `index-frontend-poc.html` — older version with browser-side rule-based scoring, no backend call
+
+**Important:** Any UI change that applies to `index.html` must also be applied to `index-frontend-poc.html`. Both files share the same layout, components, and JS logic — keep them in sync.
 
 ## How to run
 
@@ -35,17 +37,17 @@ English and Georgian (`ka`). Translations live entirely in `index.html` — two 
 
 ## Pending UI improvements (from design review session)
 
-These were identified and agreed on — none implemented yet:
+All items resolved.
 
-1. **Loading state on submit** — the Calculate Risk button gives no feedback while the backend responds. Should disable + show a spinner during the fetch. Highest priority UX fix.
+1. ~~**Loading state on submit**~~ **Done** — button disables and shows a spinner + "Calculating…" during the fetch; restores in a `finally` block on both success and error.
 
-2. ~~**Progress bar label alignment** — "Low / Moderate / High" labels are evenly spaced, implying thresholds at 33%/67%. Actual thresholds are 30%/70%. Labels or tick marks should sit at the correct positions.~~ **Done** — labels now positioned at 0%, 30%, 70% in both `index.html` and `index-frontend-poc.html`.
+2. ~~**Progress bar label alignment**~~ **Done** — labels now positioned at 0%, 30%, 70%.
 
-3. ~~**Clinical/Lifestyle score cards** — the metric cards show raw scores (`+5`) with no maximum, which is meaningless to a user. Either show as `5 / 10` or remove raw numbers and let the split bars carry the story.~~ **Done** — removed raw scores from both `index.html` and `index-frontend-poc.html`; the split bars carry the story. Also removed `+N` scores from the breakdown chart and top risk drivers list for the same reason.
+3. ~~**Clinical/Lifestyle score cards**~~ **Done** — removed raw scores; split bars carry the story. Cards replaced with Pulse Pressure and Top Risk Driver (see below).
 
-4. **Form layout on large screens** — currently 2-column (6 rows). At 1040px wide there's room for 3 columns, which would cut form height by ~a third.
+4. ~~**Form layout on large screens**~~ **Done** — 3-column layout (`col-lg-4`) at 992px+, cutting form from 6 rows to 4.
 
-5. **Font-weight values** — the CSS uses non-standard values (`820`, `760`, `650` etc.) that only work on variable fonts. System UI fonts snap to `700`/`400`. Standardize to `400 / 500 / 600 / 700`.
+5. ~~**Font-weight values**~~ **Done** — all non-standard values normalized: `820→800`, `760/750/730/720/680→700`, `650→600`.
 
 ## Additional fixes done
 
@@ -53,6 +55,10 @@ These were identified and agreed on — none implemented yet:
 - Fixed top-driver-item grid from 3-col to 2-col after score span removal
 - Added hover lift to `.metric-card` and `.info-card` to match `.result-card` behaviour
 - Removed orphaned `.driver-score` CSS rule
+- Replaced Clinical Risk Load and Lifestyle Risk Load metric cards with **Pulse Pressure** (systolic − diastolic, with Normal/Elevated/Wide status) and **Top Risk Driver** (highest-scoring group from the breakdown)
+- Fixed breakdown chart normalization: bars now show each group's share of total attributed risk (sum-based) instead of being pinned relative to the max scorer
+- Renamed "Family history" form label to "Family history of hypertension"
+- Added min/max input guard rails: age 18–100, height 100–250 cm / 3–8 ft, weight 20–300 kg / 44–660 lbs; HTML attributes and JS validation kept in sync; unit-switch handlers update attributes dynamically
 
 ## Architecture notes
 

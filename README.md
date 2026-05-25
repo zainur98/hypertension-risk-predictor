@@ -14,7 +14,8 @@ This is a prototype UI intended to simulate how a future ML-powered hypertension
 - Automatic BMI calculation
 - Blood pressure stage classification
 - Risk percentage and category output
-- Clinical score and lifestyle score summaries
+- Pulse pressure calculation with clinical status
+- Top risk driver surfaced at a glance
 - Animated result cards, progress bars, and range markers
 - Risk contribution breakdown bar chart
 - Clinical vs. lifestyle split visualization
@@ -70,8 +71,8 @@ After calculation, the app shows:
 - Animated risk progress bar
 - BMI value and BMI status
 - Blood pressure reading and stage
-- Clinical score
-- Lifestyle score
+- Pulse pressure value and classification (Normal / Elevated / Wide)
+- Top risk driver (highest-contributing factor group)
 - Clinical vs. lifestyle split bars
 - BMI range marker
 - Blood pressure stage marker

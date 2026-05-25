@@ -103,11 +103,12 @@ class RiskRequestHandler(BaseHTTPRequestHandler):
     def send_json(self, data: dict, status: int = 200, include_body: bool = True) -> None:
         response = json.dumps(data, indent=2).encode("utf-8")
         self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Content-Length", str(len(response)))
+        if status != 204:
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(response)))
         self.end_headers()
         if status != 204 and include_body:
             self.wfile.write(response)
