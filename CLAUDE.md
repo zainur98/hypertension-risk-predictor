@@ -45,7 +45,7 @@ All items resolved.
 
 3. ~~**Clinical/Lifestyle score cards**~~ **Done** — removed raw scores; split bars carry the story. Cards replaced with Pulse Pressure and Top Risk Driver (see below).
 
-4. ~~**Form layout on large screens**~~ **Done** — 3-column layout (`col-lg-4`) at 992px+, cutting form from 6 rows to 4.
+4. ~~**Form layout on large screens**~~ **Reverted** — 3-column layout was too crowded; form stays at 2 columns (`col-md-6`) at all breakpoints.
 
 5. ~~**Font-weight values**~~ **Done** — all non-standard values normalized: `820→800`, `760/750/730/720/680→700`, `650→600`.
 

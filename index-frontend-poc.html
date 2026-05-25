@@ -1008,9 +1008,6 @@
     }
 
     @media (min-width: 992px) {
-      .col-lg-4 {
-        grid-column: span 4;
-      }
 
       .col-lg-5 {
         grid-column: span 5;
@@ -1057,14 +1054,14 @@
         </div>
 
         <div class="row g-3">
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="age" class="form-label">Age</label>
               <input type="number" class="form-control" id="age" min="18" max="100" placeholder="Enter age">
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="height" class="form-label">Height</label>
               <div class="input-group">
@@ -1078,7 +1075,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="weight" class="form-label">Weight</label>
               <div class="input-group">
@@ -1091,7 +1088,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="diabetes" class="form-label">Diabetes</label>
               <select class="form-select" id="diabetes">
@@ -1102,7 +1099,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="smoking" class="form-label">Smoking</label>
               <select class="form-select" id="smoking">
@@ -1113,7 +1110,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="systolic" class="form-label">Blood pressure</label>
               <div class="input-group">
@@ -1124,7 +1121,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="familyHistory" class="form-label">Family history of hypertension</label>
               <select class="form-select" id="familyHistory">
@@ -1135,7 +1132,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="activity" class="form-label">Physical activity</label>
               <select class="form-select" id="activity">
@@ -1147,7 +1144,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="saltIntake" class="form-label">Salt intake</label>
               <select class="form-select" id="saltIntake">
@@ -1159,7 +1156,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="alcohol" class="form-label">Alcohol intake</label>
               <select class="form-select" id="alcohol">
@@ -1171,7 +1168,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="stress" class="form-label">Stress level</label>
               <select class="form-select" id="stress">
@@ -1183,7 +1180,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-12 col-md-6">
             <div class="field-shell">
               <label for="sleep" class="form-label">Average sleep</label>
               <select class="form-select" id="sleep">
@@ -1299,7 +1296,7 @@
         </div>
 
         <div class="row g-4 mt-2">
-          <div class="col-12 col-lg-4">
+          <div class="col-12">
             <div class="result-card">
               <h2 class="h5">Top risk drivers</h2>
               <ul id="topDrivers" class="top-driver-list"></ul>
@@ -1467,7 +1464,7 @@
       [".infographic-grid .info-card:nth-child(1) h2", "clinicalVsLifestyle"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "clinical"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(3) .split-label span:first-child", "lifestyle"],
       [".infographic-grid .info-card:nth-child(2) h2", "bmiRange"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "underweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "normal"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(3)", "overweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(4)", "obesity"],
       [".infographic-grid .info-card:nth-child(3) h2", "bpStage"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(1)", "normal"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(2)", "elevated"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(3)", "stage1"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(4)", "stage2Plus"],
-      [".row.mt-2 .col-lg-4 .result-card h2", "topRiskDrivers"], [".row.mt-2 .col-lg-8 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
+      [".row.mt-2 .result-card h2", "topRiskDrivers"], [".row.mt-2 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
     ];
     let currentLanguage = "en";
     let displayedRisk = 0;
