@@ -1008,6 +1008,9 @@
     }
 
     @media (min-width: 992px) {
+      .col-lg-4 {
+        grid-column: span 4;
+      }
 
       .col-lg-5 {
         grid-column: span 5;
@@ -1045,8 +1048,11 @@
 
       <form id="riskForm" class="form-section" novalidate>
         <div class="section-heading">
-          <h2>Patient details</h2>
-          <p class="section-note">Enter values to generate an estimated risk profile.</p>
+          <div>
+            <h2>Patient details</h2>
+            <p class="section-note">Enter values to generate an estimated risk profile.</p>
+          </div>
+          <button type="button" id="fillDefaults" class="btn btn-link btn-sm" style="font-size:0.75rem;padding:0;color:var(--text-muted,#6b7280);text-decoration:none;white-space:nowrap;flex-shrink:0;align-self:flex-start;">Auto fill</button>
         </div>
 
         <div id="formAlert" class="alert alert-danger d-none" role="alert">
@@ -1296,7 +1302,7 @@
         </div>
 
         <div class="row g-4 mt-2">
-          <div class="col-12">
+          <div class="col-12 col-lg-4">
             <div class="result-card">
               <h2 class="h5">Top risk drivers</h2>
               <ul id="topDrivers" class="top-driver-list"></ul>
@@ -1366,6 +1372,24 @@
     const weightUnitInput = document.getElementById("weightUnit");
     const submitBtn = form.querySelector(".btn-calculate");
     const languageSelect = document.getElementById("languageSelect");
+
+    document.getElementById("fillDefaults").addEventListener("click", function () {
+      document.getElementById("age").value = 44;
+      document.getElementById("height").value = 175;
+      document.getElementById("heightUnit").value = "cm";
+      document.getElementById("weight").value = 82;
+      document.getElementById("weightUnit").value = "kg";
+      document.getElementById("diabetes").value = "no";
+      document.getElementById("smoking").value = "no";
+      document.getElementById("systolic").value = 130;
+      document.getElementById("diastolic").value = 84;
+      document.getElementById("familyHistory").value = "yes";
+      document.getElementById("activity").value = "moderate";
+      document.getElementById("saltIntake").value = "moderate";
+      document.getElementById("alcohol").value = "moderate";
+      document.getElementById("stress").value = "moderate";
+      document.getElementById("sleep").value = "healthy";
+    });
     const APP_CONFIG = {
       riskEngine: "backend", // Options: "backend" or "browser-rules"
       backendUrl: window.location.protocol === "file:"
@@ -1464,7 +1488,7 @@
       [".infographic-grid .info-card:nth-child(1) h2", "clinicalVsLifestyle"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "clinical"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(3) .split-label span:first-child", "lifestyle"],
       [".infographic-grid .info-card:nth-child(2) h2", "bmiRange"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "underweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "normal"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(3)", "overweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(4)", "obesity"],
       [".infographic-grid .info-card:nth-child(3) h2", "bpStage"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(1)", "normal"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(2)", "elevated"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(3)", "stage1"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(4)", "stage2Plus"],
-      [".row.mt-2 .result-card h2", "topRiskDrivers"], [".row.mt-2 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
+      [".row.mt-2 .col-lg-4 .result-card h2", "topRiskDrivers"], [".row.mt-2 .col-lg-8 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
     ];
     let currentLanguage = "en";
     let displayedRisk = 0;

@@ -1015,6 +1015,9 @@
     }
 
     @media (min-width: 992px) {
+      .col-lg-4 {
+        grid-column: span 4;
+      }
 
       .col-lg-5 {
         grid-column: span 5;
@@ -1303,7 +1306,7 @@
         </div>
 
         <div class="row g-4 mt-2">
-          <div class="col-12">
+          <div class="col-12 col-lg-4">
             <div class="result-card">
               <h2 class="h5">Top risk drivers</h2>
               <ul id="topDrivers" class="top-driver-list"></ul>
