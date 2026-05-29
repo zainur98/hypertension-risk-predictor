@@ -681,7 +681,7 @@
 
     .infographic-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       margin-top: 24px;
     }
@@ -856,6 +856,44 @@
       border-radius: 50%;
       background: var(--teal);
       box-shadow: 0 0 0 4px rgba(21, 127, 114, 0.1);
+    }
+
+    .rec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 14px;
+    }
+
+    .rec-group-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rec-item {
+      padding: 9px 12px 9px 14px;
+      border-radius: 6px;
+      background: var(--surface-soft);
+      border-left: 3px solid var(--teal);
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      color: #314554;
+      line-height: 1.45;
+      animation: listItemEnter 360ms ease both;
+    }
+
+    .rec-item--medical {
+      border-left-color: var(--blue);
+    }
+
+    .rec-item--monitoring {
+      border-left-color: var(--gold);
     }
 
     footer {
@@ -1072,7 +1110,7 @@
               <label for="height" class="form-label">Height</label>
               <div class="input-group">
                 <input type="number" class="form-control" id="height" min="100" max="250" step="0.1" placeholder="Enter height">
-                <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11" step="0.1" placeholder="Inches" aria-label="Height inches">
+                <input type="number" class="form-control height-inches-input" id="heightInches" min="0" max="11.9" step="0.1" placeholder="Inches" aria-label="Height inches">
                 <select class="form-select" id="heightUnit" aria-label="Height unit">
                   <option value="cm">cm</option>
                   <option value="ft-in">feet/inches</option>
@@ -1091,6 +1129,17 @@
                   <option value="lbs">lbs</option>
                 </select>
               </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="field-shell">
+              <label for="gender" class="form-label">Gender</label>
+              <select class="form-select" id="gender">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
             </div>
           </div>
 
@@ -1251,28 +1300,6 @@
 
         <div class="infographic-grid" aria-label="Risk infographics">
           <div class="info-card">
-            <h2 class="h5">Clinical vs. lifestyle</h2>
-            <div class="split-row">
-              <div class="split-label">
-                <span>Clinical</span>
-                <span id="clinicalPercent">0%</span>
-              </div>
-              <div class="split-track">
-                <div id="clinicalSplitFill" class="split-fill clinical"></div>
-              </div>
-            </div>
-            <div class="split-row">
-              <div class="split-label">
-                <span>Lifestyle</span>
-                <span id="lifestylePercent">0%</span>
-              </div>
-              <div class="split-track">
-                <div id="lifestyleSplitFill" class="split-fill lifestyle"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-card">
             <h2 class="h5">BMI range</h2>
             <div class="range-track" aria-hidden="true">
               <span id="bmiMarker" class="range-marker"></span>
@@ -1302,31 +1329,24 @@
         </div>
 
         <div class="row g-4 mt-2">
-          <div class="col-12 col-lg-4">
+          <div class="col-12 col-lg-5">
             <div class="result-card">
-              <h2 class="h5">Top risk drivers</h2>
-              <ul id="topDrivers" class="top-driver-list"></ul>
+              <h2 class="h5">Risk drivers</h2>
+              <div id="riskDriversChart" class="bar-list"></div>
             </div>
           </div>
 
-          <div class="col-12 col-lg-8">
+          <div class="col-12 col-lg-7">
             <div class="result-card">
               <h2 class="h5">Risk contribution breakdown</h2>
               <div id="breakdownChart" class="bar-list"></div>
             </div>
           </div>
 
-          <div class="col-12 col-md-6">
-            <div class="result-card">
-              <h2 class="h5">Contributing factors</h2>
-              <ul id="factorList" class="summary-list"></ul>
-            </div>
-          </div>
-
-          <div class="col-12 col-md-6">
+          <div class="col-12">
             <div class="result-card">
               <h2 class="h5">Recommendations</h2>
-              <ul id="recommendationList" class="summary-list"></ul>
+              <div id="recommendationList" class="rec-grid"></div>
             </div>
           </div>
         </div>
@@ -1345,7 +1365,6 @@
     const riskPercentage = document.getElementById("riskPercentage");
     const riskCategory = document.getElementById("riskCategory");
     const riskProgress = document.getElementById("riskProgress");
-    const factorList = document.getElementById("factorList");
     const recommendationList = document.getElementById("recommendationList");
     const bmiValue = document.getElementById("bmiValue");
     const bmiStatus = document.getElementById("bmiStatus");
@@ -1356,15 +1375,11 @@
     const ppStatus = document.getElementById("ppStatus");
     const topDriverValue = document.getElementById("topDriverValue");
     const topDriverNote = document.getElementById("topDriverNote");
-    const clinicalPercent = document.getElementById("clinicalPercent");
-    const lifestylePercent = document.getElementById("lifestylePercent");
-    const clinicalSplitFill = document.getElementById("clinicalSplitFill");
-    const lifestyleSplitFill = document.getElementById("lifestyleSplitFill");
     const bmiMarker = document.getElementById("bmiMarker");
     const bpMarker = document.getElementById("bpMarker");
     const bmiRangeNote = document.getElementById("bmiRangeNote");
     const bpRangeNote = document.getElementById("bpRangeNote");
-    const topDrivers = document.getElementById("topDrivers");
+    const riskDriversChart = document.getElementById("riskDriversChart");
     const heightInput = document.getElementById("height");
     const heightUnitInput = document.getElementById("heightUnit");
     const heightInchesInput = document.getElementById("heightInches");
@@ -1379,6 +1394,7 @@
       document.getElementById("heightUnit").value = "cm";
       document.getElementById("weight").value = 82;
       document.getElementById("weightUnit").value = "kg";
+      document.getElementById("gender").value = "male";
       document.getElementById("diabetes").value = "no";
       document.getElementById("smoking").value = "no";
       document.getElementById("systolic").value = 130;
@@ -1405,7 +1421,7 @@
         patientDetails: "Patient details", sectionNote: "Enter values to generate an estimated risk profile.",
         validationMessage: "Please complete all fields with valid values before calculating risk.",
         backendError: "Unable to calculate risk. Check that the backend is running or enable the browser-rule fallback.",
-        age: "Age", height: "Height", weight: "Weight", diabetes: "Diabetes", smoking: "Smoking",
+        age: "Age", height: "Height", weight: "Weight", gender: "Gender", selectSex: "Select gender", male: "Male", female: "Female", diabetes: "Diabetes", smoking: "Smoking",
         bloodPressure: "Blood pressure", familyHistory: "Family history of hypertension", physicalActivity: "Physical activity",
         saltIntake: "Salt intake", alcoholIntake: "Alcohol intake", stressLevel: "Stress level", averageSleep: "Average sleep",
         enterAge: "Enter age", enterHeight: "Enter height", enterFeet: "Enter feet", inches: "Inches", enterWeight: "Enter weight",
@@ -1421,15 +1437,14 @@
         lowRisk: "Low Risk", moderateRisk: "Moderate Risk", highRisk: "High Risk", waitingForInput: "Waiting for input",
         pulsePressure: "Pulse Pressure", ppNormal: "Normal (<40 mmHg)", ppElevated: "Elevated (40–60 mmHg)", ppWide: "Wide (>60 mmHg)",
         topRiskDriver: "Top Risk Driver", highestContributingGroup: "Highest contributing group",
-        bmi: "BMI", clinicalRiskLoad: "Clinical Risk Load", lifestyleRiskLoad: "Lifestyle Risk Load",
-        clinicalNote: "Age, BP, diabetes, history", lifestyleNote: "Smoking, activity, diet, sleep",
+        bmi: "BMI",
         metricsAria: "Assessment metrics", infographicsAria: "Risk infographics",
-        clinicalVsLifestyle: "Clinical vs. lifestyle", clinical: "Clinical", lifestyle: "Lifestyle", bmiRange: "BMI range",
+        bmiRange: "BMI range",
         underweight: "Underweight", normal: "Normal", overweight: "Overweight", obesity: "Obesity",
         bpStage: "Blood pressure stage", elevated: "Elevated", stage1: "Stage 1", stage2Plus: "Stage 2+",
-        topRiskDrivers: "Top risk drivers", riskBreakdown: "Risk contribution breakdown",
-        contributingFactors: "Contributing factors", recommendations: "Recommendations",
-        noListedRiskFactors: "No listed risk factors from the current rule output",
+        topRiskDrivers: "Risk drivers", riskBreakdown: "Risk profile",
+        recommendations: "Recommendations",
+        recLifestyle: "Lifestyle", recMedical: "Medical", recMonitoring: "Monitoring",
         maintainHabits: "Maintain healthy lifestyle habits and routine checkups", noMajorDrivers: "No major drivers detected",
         bmiAt: " at BMI ", bpAt: " at ",
         footer: "This tool is for educational purposes only and not a substitute for professional medical advice."
@@ -1441,7 +1456,7 @@
         patientDetails: "პაციენტის მონაცემები", sectionNote: "შეიყვანეთ მნიშვნელობები სავარაუდო რისკის პროფილის მისაღებად.",
         validationMessage: "გთხოვთ, რისკის გამოთვლამდე ყველა ველი შეავსოთ სწორი მნიშვნელობებით.",
         backendError: "რისკის გამოთვლა ვერ მოხერხდა. შეამოწმეთ, რომ backend გაშვებულია ან browser-rule fallback ჩართულია.",
-        age: "ასაკი", height: "სიმაღლე", weight: "წონა", diabetes: "დიაბეტი", smoking: "მოწევა",
+        age: "ასაკი", height: "სიმაღლე", weight: "წონა", gender: "სქესი/გენდერი", selectSex: "აირჩიეთ", male: "მამრობითი", female: "მდედრობითი", diabetes: "დიაბეტი", smoking: "მოწევა",
         bloodPressure: "არტერიული წნევა", familyHistory: "ჰიპერტენზიის ოჯახური ისტორია", physicalActivity: "ფიზიკური აქტივობა",
         saltIntake: "მარილის მიღება", alcoholIntake: "ალკოჰოლის მიღება", stressLevel: "სტრესის დონე", averageSleep: "საშუალო ძილი",
         enterAge: "შეიყვანეთ ასაკი", enterHeight: "შეიყვანეთ სიმაღლე", enterFeet: "შეიყვანეთ ფუტი", inches: "დუიმი", enterWeight: "შეიყვანეთ წონა",
@@ -1457,15 +1472,14 @@
         lowRisk: "დაბალი რისკი", moderateRisk: "ზომიერი რისკი", highRisk: "მაღალი რისკი", waitingForInput: "ველოდებით მონაცემებს",
         pulsePressure: "პულსური წნევა", ppNormal: "ნორმა (<40 მმHg)", ppElevated: "მომატებული (40–60 მმHg)", ppWide: "განიერი (>60 მმHg)",
         topRiskDriver: "მთავარი რისკ-ფაქტორი", highestContributingGroup: "ყველაზე მაღალი წვლილის ჯგუფი",
-        bmi: "BMI", clinicalRiskLoad: "კლინიკური რისკის დატვირთვა", lifestyleRiskLoad: "ცხოვრების წესის რისკის დატვირთვა",
-        clinicalNote: "ასაკი, წნევა, დიაბეტი, ისტორია", lifestyleNote: "მოწევა, აქტივობა, კვება, ძილი",
+        bmi: "BMI",
         metricsAria: "შეფასების მეტრიკები", infographicsAria: "რისკის ინფოგრაფიკა",
-        clinicalVsLifestyle: "კლინიკური და ცხოვრების წესი", clinical: "კლინიკური", lifestyle: "ცხოვრების წესი", bmiRange: "BMI-ის დიაპაზონი",
+        bmiRange: "BMI-ის დიაპაზონი",
         underweight: "დაბალი წონა", normal: "ნორმა", overweight: "ჭარბი წონა", obesity: "სიმსუქნე",
         bpStage: "არტერიული წნევის სტადია", elevated: "მომატებული", stage1: "სტადია 1", stage2Plus: "სტადია 2+",
-        topRiskDrivers: "რისკის მთავარი ფაქტორები", riskBreakdown: "რისკის წვლილის დეტალიზაცია",
-        contributingFactors: "ხელშემწყობი ფაქტორები", recommendations: "რეკომენდაციები",
-        noListedRiskFactors: "მიმდინარე წესების შედეგში რისკის ფაქტორები მითითებული არ არის",
+        topRiskDrivers: "რისკის ფაქტორები", riskBreakdown: "რისკის პროფილი",
+        recommendations: "რეკომენდაციები",
+        recLifestyle: "ცხოვრების წესი", recMedical: "სამედიცინო", recMonitoring: "მონიტორინგი",
         maintainHabits: "შეინარჩუნეთ ჯანსაღი ცხოვრების ჩვევები და რეგულარული შემოწმება", noMajorDrivers: "მნიშვნელოვანი ფაქტორები არ გამოვლინდა",
         bmiAt: " BMI-ით ", bpAt: " მაჩვენებლით ",
         footer: "ეს ინსტრუმენტი განკუთვნილია მხოლოდ საგანმანათლებლო მიზნებისთვის და არ ცვლის პროფესიონალურ სამედიცინო რჩევას."
@@ -1476,23 +1490,23 @@
       "Normal range": "ნორმალური დიაპაზონი", "Below normal range": "ნორმაზე დაბალი დიაპაზონი", "Overweight range": "ჭარბი წონის დიაპაზონი", "Obesity range": "სიმსუქნის დიაპაზონი",
       "Normal blood pressure range": "არტერიული წნევის ნორმალური დიაპაზონი", "Elevated blood pressure range": "არტერიული წნევის მომატებული დიაპაზონი", "Stage 1 hypertension range": "ჰიპერტენზიის 1-ლი სტადიის დიაპაზონი", "Stage 2 hypertension range": "ჰიპერტენზიის მე-2 სტადიის დიაპაზონი", "Hypertensive crisis range": "ჰიპერტენზიული კრიზისის დიაპაზონი",
       "Age": "ასაკი", "Blood pressure": "არტერიული წნევა", "Medical history": "სამედიცინო ისტორია", "Lifestyle": "ცხოვრების წესი",
-      "Diabetes": "დიაბეტი", "Family history of hypertension": "ჰიპერტენზიის ოჯახური ისტორია", "Smoking": "მოწევა", "Low physical activity": "დაბალი ფიზიკური აქტივობა", "Moderate activity level": "ზომიერი აქტივობის დონე", "High sodium intake": "ნატრიუმის მაღალი მიღება", "Heavy alcohol intake": "ალკოჰოლის მაღალი მიღება", "High stress": "მაღალი სტრესი", "Short sleep duration": "მოკლე ძილის ხანგრძლივობა", "Age 60 or older": "ასაკი 60 ან მეტი", "Age over 40": "ასაკი 40-ზე მეტი",
+      "Male sex": "მამრობითი სქესი", "Diabetes": "დიაბეტი", "Family history of hypertension": "ჰიპერტენზიის ოჯახური ისტორია", "Smoking": "მოწევა", "Low physical activity": "დაბალი ფიზიკური აქტივობა", "Moderate activity level": "ზომიერი აქტივობის დონე", "High sodium intake": "ნატრიუმის მაღალი მიღება", "Heavy alcohol intake": "ალკოჰოლის მაღალი მიღება", "High stress": "მაღალი სტრესი", "Short sleep duration": "მოკლე ძილის ხანგრძლივობა", "Age 60 or older": "ასაკი 60 ან მეტი", "Age over 40": "ასაკი 40-ზე მეტი",
       "Discuss blood pressure targets with a clinician": "განიხილეთ არტერიული წნევის სამიზნე მაჩვენებლები კლინიცისტთან", "Smoking cessation support is strongly recommended": "მოწევის შეწყვეტის მხარდაჭერა მკაცრად რეკომენდებულია", "Build toward regular moderate activity": "ნელ-ნელა გადადით რეგულარულ ზომიერ აქტივობაზე", "Reduce sodium-heavy and highly processed foods": "შეამცირეთ ნატრიუმით მდიდარი და ძლიერ დამუშავებული საკვები", "Consider reducing alcohol intake": "განიხილეთ ალკოჰოლის შემცირება", "Add stress-management habits and recovery time": "დაამატეთ სტრესის მართვის ჩვევები და აღდგენის დრო", "Aim for consistent 7 to 9 hours of sleep when possible": "შეძლებისდაგვარად დაისახეთ 7-დან 9 საათამდე სტაბილური ძილი", "Monitor blood pressure regularly": "რეგულარულად აკონტროლეთ არტერიული წნევა", "Confirm readings with repeated measurements": "დაადასტურეთ მაჩვენებლები განმეორებითი გაზომვებით", "Consider weight, nutrition, and activity goals": "განიხილეთ წონის, კვებისა და აქტივობის მიზნები"
       ,"Moderate salt intake": "მარილის ზომიერი მიღება", "Family history": "ოჯახური ისტორია", "Diastolic": "დიასტოლური", "Systolic": "სისტოლური", "Moderate stress": "ზომიერი სტრესი", "Confirm blood pressure readings with repeated measurements": "დაადასტურეთ არტერიული წნევის მაჩვენებლები განმეორებითი გაზომვებით", "Review weight, nutrition, and activity goals": "გადახედეთ წონის, კვებისა და აქტივობის მიზნებს"
     };
     const LOCALIZED_SELECTORS = [
       [".language-control label", "languageLabel"], ["#pageTitle", "title"], [".tool-subtitle", "subtitle"], [".section-heading h2", "patientDetails"], [".section-note", "sectionNote"],
-      ["label[for='age']", "age"], ["label[for='height']", "height"], ["label[for='weight']", "weight"], ["label[for='diabetes']", "diabetes"], ["label[for='smoking']", "smoking"], ["label[for='systolic']", "bloodPressure"], ["label[for='familyHistory']", "familyHistory"], ["label[for='activity']", "physicalActivity"], ["label[for='saltIntake']", "saltIntake"], ["label[for='alcohol']", "alcoholIntake"], ["label[for='stress']", "stressLevel"], ["label[for='sleep']", "averageSleep"],
+      ["label[for='age']", "age"], ["label[for='height']", "height"], ["label[for='weight']", "weight"], ["label[for='gender']", "gender"], ["label[for='diabetes']", "diabetes"], ["label[for='smoking']", "smoking"], ["label[for='systolic']", "bloodPressure"], ["label[for='familyHistory']", "familyHistory"], ["label[for='activity']", "physicalActivity"], ["label[for='saltIntake']", "saltIntake"], ["label[for='alcohol']", "alcoholIntake"], ["label[for='stress']", "stressLevel"], ["label[for='sleep']", "averageSleep"],
       [".btn-calculate", "calculateRisk"], [".result-card .text-uppercase", "estimatedRisk"], [".meter-labels span:nth-child(1)", "low"], [".meter-labels span:nth-child(2)", "moderate"], [".meter-labels span:nth-child(3)", "high"],
       [".metric-card:nth-child(1) .metric-label", "bmi"], [".metric-card:nth-child(2) .metric-label", "bloodPressure"], [".metric-card:nth-child(3) .metric-label", "pulsePressure"], [".metric-card:nth-child(4) .metric-label", "topRiskDriver"],
-      [".infographic-grid .info-card:nth-child(1) h2", "clinicalVsLifestyle"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(2) .split-label span:first-child", "clinical"], [".infographic-grid .info-card:nth-child(1) .split-row:nth-child(3) .split-label span:first-child", "lifestyle"],
-      [".infographic-grid .info-card:nth-child(2) h2", "bmiRange"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "underweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "normal"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(3)", "overweight"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(4)", "obesity"],
-      [".infographic-grid .info-card:nth-child(3) h2", "bpStage"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(1)", "normal"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(2)", "elevated"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(3)", "stage1"], [".infographic-grid .info-card:nth-child(3) .range-labels span:nth-child(4)", "stage2Plus"],
-      [".row.mt-2 .col-lg-4 .result-card h2", "topRiskDrivers"], [".row.mt-2 .col-lg-8 .result-card h2", "riskBreakdown"], [".row.mt-2 .col-md-6:nth-child(3) .result-card h2", "contributingFactors"], [".row.mt-2 .col-md-6:nth-child(4) .result-card h2", "recommendations"], ["footer", "footer"]
+      [".infographic-grid .info-card:nth-child(1) h2", "bmiRange"], [".infographic-grid .info-card:nth-child(1) .range-labels span:nth-child(1)", "underweight"], [".infographic-grid .info-card:nth-child(1) .range-labels span:nth-child(2)", "normal"], [".infographic-grid .info-card:nth-child(1) .range-labels span:nth-child(3)", "overweight"], [".infographic-grid .info-card:nth-child(1) .range-labels span:nth-child(4)", "obesity"],
+      [".infographic-grid .info-card:nth-child(2) h2", "bpStage"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(1)", "normal"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(2)", "elevated"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(3)", "stage1"], [".infographic-grid .info-card:nth-child(2) .range-labels span:nth-child(4)", "stage2Plus"],
+      [".row.mt-2 .col-lg-5 .result-card h2", "topRiskDrivers"], [".row.mt-2 .col-lg-7 .result-card h2", "riskBreakdown"], [".row.mt-2 > div:last-child .result-card h2", "recommendations"], ["footer", "footer"]
     ];
     let currentLanguage = "en";
     let displayedRisk = 0;
     let lastAssessment = null;
+    let currentAlertKey = "validationMessage";
 
     languageSelect.addEventListener("change", function () {
       currentLanguage = languageSelect.value;
@@ -1529,6 +1543,7 @@
       const heightInches = Number(heightInchesInput.value || 0);
       const weight = Number(document.getElementById("weight").value);
       const weightUnit = document.getElementById("weightUnit").value;
+      const gender = document.getElementById("gender").value;
       const diabetes = document.getElementById("diabetes").value;
       const smoking = document.getElementById("smoking").value;
       const systolic = Number(document.getElementById("systolic").value);
@@ -1546,7 +1561,7 @@
       const weightMax = weightUnit === "kg" ? 300 : 660;
 
       if (
-        !age || !height || !weight || !diabetes || !smoking || !systolic || !diastolic ||
+        !age || !height || !weight || !gender || !diabetes || !smoking || !systolic || !diastolic ||
         !familyHistory || !activity || !saltIntake || !alcohol || !stress || !sleep ||
         age < 18 || age > 100 ||
         height < heightMin || height > heightMax ||
@@ -1554,6 +1569,7 @@
         weight < weightMin || weight > weightMax ||
         systolic < 70 || systolic > 260 || diastolic < 40 || diastolic > 160 || systolic <= diastolic
       ) {
+        currentAlertKey = "validationMessage";
         formAlert.textContent = t("validationMessage");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
@@ -1565,6 +1581,7 @@
       const bmi = calculateBmi(height, heightUnit, heightInches, weight, weightUnit);
 
       if (!Number.isFinite(bmi)) {
+        currentAlertKey = "validationMessage";
         formAlert.textContent = t("validationMessage");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
@@ -1581,6 +1598,7 @@
         bmi,
         systolic,
         diastolic,
+        gender,
         diabetes,
         smoking,
         familyHistory,
@@ -1598,6 +1616,7 @@
         const assessment = await getRiskAssessment(assessmentInput);
         renderResults(assessment);
       } catch (error) {
+        currentAlertKey = "backendError";
         formAlert.textContent = t("backendError");
         formAlert.classList.remove("d-none");
         results.classList.remove("show");
@@ -1640,6 +1659,7 @@
           weightUnit: inputs.weightUnit,
           systolic: inputs.systolic,
           diastolic: inputs.diastolic,
+          gender: inputs.gender,
           diabetes: inputs.diabetes,
           smoking: inputs.smoking,
           familyHistory: inputs.familyHistory,
@@ -1668,9 +1688,8 @@
         diastolic: inputs.diastolic,
         bmiStatus: data.calculated.bmiStatus,
         bpStatus: data.calculated.bloodPressureStage,
-        clinicalTotal: data.calculated.clinicalRiskLoad,
-        lifestyleTotal: data.calculated.lifestyleRiskLoad,
         breakdown: data.breakdown,
+        riskDrivers: data.riskDrivers,
         factors: data.factors,
         recommendations: data.recommendations
       };
@@ -1687,6 +1706,7 @@
     function calculateRiskAssessment(inputs) {
       const factors = [];
       const recommendations = [];
+      const riskDrivers = [];
       const breakdown = [
         { label: "Age", score: scoreAge(inputs.age) },
         { label: "Blood pressure", score: scoreBloodPressure(inputs.systolic, inputs.diastolic) },
@@ -1698,88 +1718,109 @@
       const medicalHistory = breakdown.find(function (item) { return item.label === "Medical history"; });
       const lifestyle = breakdown.find(function (item) { return item.label === "Lifestyle"; });
 
+      if (inputs.gender === "male") {
+        medicalHistory.score += 6;
+        riskDrivers.push({ feature: "gender_male", factor: "Male sex", riskContribution: 6 });
+      }
+
       if (inputs.diabetes === "yes") {
         medicalHistory.score += 12;
+        riskDrivers.push({ feature: "diabetes_yes", factor: "Diabetes", riskContribution: 12 });
         factors.push("Diabetes");
         recommendations.push("Discuss blood pressure targets with a clinician");
       }
 
       if (inputs.familyHistory === "yes") {
         medicalHistory.score += 8;
+        riskDrivers.push({ feature: "family_history_yes", factor: "Family history", riskContribution: 8 });
         factors.push("Family history of hypertension");
       }
 
       if (inputs.smoking === "yes") {
         lifestyle.score += 10;
+        riskDrivers.push({ feature: "smoking_yes", factor: "Smoking", riskContribution: 10 });
         factors.push("Smoking");
         recommendations.push("Smoking cessation support is strongly recommended");
       }
 
       if (inputs.activity === "low") {
         lifestyle.score += 8;
+        riskDrivers.push({ feature: "activity_low", factor: "Low physical activity", riskContribution: 8 });
         factors.push("Low physical activity");
         recommendations.push("Build toward regular moderate activity");
       } else if (inputs.activity === "moderate") {
         lifestyle.score += 3;
+        riskDrivers.push({ feature: "activity_moderate", factor: "Moderate physical activity", riskContribution: 3 });
         factors.push("Moderate activity level");
       }
 
       if (inputs.saltIntake === "high") {
         lifestyle.score += 8;
+        riskDrivers.push({ feature: "salt_high", factor: "High salt intake", riskContribution: 8 });
         factors.push("High sodium intake");
         recommendations.push("Reduce sodium-heavy and highly processed foods");
       } else if (inputs.saltIntake === "moderate") {
         lifestyle.score += 3;
+        riskDrivers.push({ feature: "salt_moderate", factor: "Moderate salt intake", riskContribution: 3 });
       }
 
       if (inputs.alcohol === "high") {
         lifestyle.score += 7;
+        riskDrivers.push({ feature: "alcohol_high", factor: "High alcohol intake", riskContribution: 7 });
         factors.push("Heavy alcohol intake");
         recommendations.push("Consider reducing alcohol intake");
       } else if (inputs.alcohol === "moderate") {
         lifestyle.score += 2;
+        riskDrivers.push({ feature: "alcohol_moderate", factor: "Moderate alcohol intake", riskContribution: 2 });
       }
 
       if (inputs.stress === "high") {
         lifestyle.score += 6;
+        riskDrivers.push({ feature: "stress_high", factor: "High stress", riskContribution: 6 });
         factors.push("High stress");
         recommendations.push("Add stress-management habits and recovery time");
       } else if (inputs.stress === "moderate") {
         lifestyle.score += 3;
+        riskDrivers.push({ feature: "stress_moderate", factor: "Moderate stress", riskContribution: 3 });
       }
 
       if (inputs.sleep === "short") {
         lifestyle.score += 6;
+        riskDrivers.push({ feature: "sleep_short", factor: "Short sleep", riskContribution: 6 });
         factors.push("Short sleep duration");
         recommendations.push("Aim for consistent 7 to 9 hours of sleep when possible");
       } else if (inputs.sleep === "long") {
         lifestyle.score += 3;
+        riskDrivers.push({ feature: "sleep_long", factor: "Long sleep", riskContribution: 3 });
       }
 
       const bpStatusText = getBloodPressureStatus(inputs.systolic, inputs.diastolic);
       const bmiStatusText = getBmiStatus(inputs.bmi);
 
       if (breakdown[0].score > 0) {
+        riskDrivers.push({ feature: "age", factor: "Age", riskContribution: breakdown[0].score });
         factors.push(inputs.age >= 60 ? "Age 60 or older" : "Age over 40");
         recommendations.push("Monitor blood pressure regularly");
       }
 
       if (breakdown[1].score > 0) {
+        riskDrivers.push({ feature: "systolic", factor: "Blood pressure", riskContribution: breakdown[1].score });
         factors.push(bpStatusText);
         recommendations.push("Confirm readings with repeated measurements");
       }
 
       if (breakdown[2].score > 0) {
+        riskDrivers.push({ feature: "bmi", factor: "BMI", riskContribution: breakdown[2].score });
         factors.push(bmiStatusText + " BMI (" + inputs.bmi.toFixed(1) + ")");
         recommendations.push("Consider weight, nutrition, and activity goals");
       }
+
+      riskDrivers.sort(function (a, b) { return b.riskContribution - a.riskContribution; });
 
       const rawRisk = breakdown.reduce(function (total, item) {
         return total + item.score;
       }, 0);
       const risk = Math.min(Math.round(rawRisk), 100);
-      const clinicalTotal = breakdown[0].score + breakdown[1].score + medicalHistory.score;
-      const lifestyleTotal = breakdown[2].score + lifestyle.score;
 
       return {
         risk,
@@ -1788,9 +1829,8 @@
         diastolic: inputs.diastolic,
         bmiStatus: bmiStatusText,
         bpStatus: bpStatusText,
-        clinicalTotal,
-        lifestyleTotal,
         breakdown,
+        riskDrivers,
         factors,
         recommendations
       };
@@ -1903,17 +1943,17 @@
       ppStatus.textContent = getPulsePressureStatus(pp);
 
       const topDriver = assessment.breakdown.reduce(function(a, b) { return b.score > a.score ? b : a; });
-      topDriverValue.textContent = translatePhrase(topDriver.label);
-      topDriverNote.textContent = t("highestContributingGroup");
+      topDriverValue.textContent = topDriver.score > 0 ? translatePhrase(topDriver.label) : "--";
+      topDriverNote.textContent = topDriver.score > 0 ? t("highestContributingGroup") : t("waitingForInput");
 
       riskProgress.style.width = risk + "%";
       riskProgress.className = "progress-bar " + category.progressClass;
       riskProgress.parentElement.setAttribute("aria-valuenow", String(risk));
 
-      renderBreakdown(assessment.breakdown);
+      renderRiskDriversChart(assessment.riskDrivers);
+      renderRadarChart(assessment.breakdown);
       renderInfographics(assessment);
-      renderList(factorList, assessment.factors, t("noListedRiskFactors"));
-      renderList(recommendationList, assessment.recommendations, t("maintainHabits"));
+      renderRecommendations(assessment.recommendations);
 
       results.classList.add("show");
       results.classList.remove("highlight");
@@ -1922,11 +1962,81 @@
       results.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
-    function renderBreakdown(breakdown) {
-      breakdownChart.innerHTML = "";
-      const totalScore = breakdown.reduce(function (sum, item) { return sum + item.score; }, 0) || 1;
+    function renderRadarChart(breakdown) {
+      const cx = 150, cy = 148, R = 88;
+      const total = breakdown.reduce(function (s, g) { return s + g.score; }, 0) || 1;
+      const angles = breakdown.map(function (_, i) {
+        return -Math.PI / 2 + i * 2 * Math.PI / breakdown.length;
+      });
 
-      breakdown.forEach(function (item, index) {
+      function pt(radius, i) {
+        return (cx + radius * Math.cos(angles[i])).toFixed(1) + "," + (cy + radius * Math.sin(angles[i])).toFixed(1);
+      }
+
+      function polyPts(radius) {
+        return breakdown.map(function (_, i) { return pt(radius, i); }).join(" ");
+      }
+
+      const grids = [0.25, 0.5, 0.75, 1.0].map(function (f) {
+        return '<polygon points="' + polyPts(R * f) + '" fill="none" stroke="#d9e4ec" stroke-width="1"/>';
+      }).join("");
+
+      const axes = breakdown.map(function (_, i) {
+        const ex = (cx + R * Math.cos(angles[i])).toFixed(1);
+        const ey = (cy + R * Math.sin(angles[i])).toFixed(1);
+        return '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex + '" y2="' + ey + '" stroke="#d9e4ec" stroke-width="1"/>';
+      }).join("");
+
+      const dataPts = breakdown.map(function (g, i) { return pt(R * g.score / total, i); }).join(" ");
+
+      const dots = breakdown.map(function (g, i) {
+        if (!g.score) return "";
+        return '<circle cx="' + (cx + R * g.score / total * Math.cos(angles[i])).toFixed(1) + '" cy="' + (cy + R * g.score / total * Math.sin(angles[i])).toFixed(1) + '" r="3.5" fill="var(--blue)"/>';
+      }).join("");
+
+      const labelR = R + 19;
+      const labels = breakdown.map(function (g, i) {
+        const lx = (cx + labelR * Math.cos(angles[i])).toFixed(1);
+        const ly = (cy + labelR * Math.sin(angles[i])).toFixed(1);
+        const cosA = Math.cos(angles[i]);
+        const anchor = Math.abs(cosA) < 0.15 ? "middle" : (cosA > 0 ? "start" : "end");
+        return '<text x="' + lx + '" y="' + ly + '" text-anchor="' + anchor + '" dominant-baseline="middle" font-size="10" font-family="inherit" fill="#667789" font-weight="600">' + translatePhrase(g.label) + "</text>";
+      }).join("");
+
+      breakdownChart.innerHTML =
+        '<svg viewBox="0 0 300 280" width="100%" style="overflow:visible;display:block;max-width:360px;margin:0 auto;">' +
+        grids + axes +
+        '<polygon points="' + dataPts + '" fill="rgba(18,107,154,0.15)" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>' +
+        dots + labels + "</svg>";
+    }
+
+    function renderInfographics(assessment) {
+      bmiMarker.style.left = clamp((assessment.bmi - 15) / 25 * 100, 0, 100) + "%";
+      bmiRangeNote.textContent = translatePhrase(assessment.bmiStatus) + t("bmiAt") + assessment.bmi.toFixed(1);
+
+      bpMarker.style.left = getBloodPressureMarkerPosition(assessment.systolic, assessment.diastolic) + "%";
+      bpRangeNote.textContent = translatePhrase(assessment.bpStatus) + t("bpAt") + assessment.systolic + "/" + assessment.diastolic + " mmHg";
+
+    }
+
+    function renderRiskDriversChart(riskDrivers) {
+      const drivers = riskDrivers
+        .filter(function (item) { return item.riskContribution > 0; })
+        .slice(0, 6);
+      const totalScore = riskDrivers.reduce(function (s, d) { return s + d.riskContribution; }, 0) || 1;
+
+      riskDriversChart.innerHTML = "";
+
+      if (!drivers.length) {
+        const msg = document.createElement("p");
+        msg.className = "metric-note";
+        msg.style.marginTop = "8px";
+        msg.textContent = t("noMajorDrivers");
+        riskDriversChart.appendChild(msg);
+        return;
+      }
+
+      drivers.forEach(function (item, index) {
         const row = document.createElement("div");
         const top = document.createElement("div");
         const label = document.createElement("span");
@@ -1938,70 +2048,17 @@
         top.className = "bar-top";
         track.className = "bar-track";
         fill.className = "bar-fill";
-        label.textContent = translatePhrase(item.label);
+        label.textContent = translatePhrase(item.factor);
 
         top.appendChild(label);
         track.appendChild(fill);
         row.appendChild(top);
         row.appendChild(track);
-        breakdownChart.appendChild(row);
+        riskDriversChart.appendChild(row);
 
         requestAnimationFrame(function () {
-          fill.style.width = item.score / totalScore * 100 + "%";
+          fill.style.width = item.riskContribution / totalScore * 100 + "%";
         });
-      });
-    }
-
-    function renderInfographics(assessment) {
-      const combinedScore = assessment.clinicalTotal + assessment.lifestyleTotal || 1;
-      const clinicalShare = Math.round(assessment.clinicalTotal / combinedScore * 100);
-      const lifestyleShare = 100 - clinicalShare;
-
-      clinicalPercent.textContent = clinicalShare + "%";
-      lifestylePercent.textContent = lifestyleShare + "%";
-      clinicalSplitFill.style.width = clinicalShare + "%";
-      lifestyleSplitFill.style.width = lifestyleShare + "%";
-
-      bmiMarker.style.left = clamp((assessment.bmi - 15) / 25 * 100, 0, 100) + "%";
-      bmiRangeNote.textContent = translatePhrase(assessment.bmiStatus) + t("bmiAt") + assessment.bmi.toFixed(1);
-
-      bpMarker.style.left = getBloodPressureMarkerPosition(assessment.systolic, assessment.diastolic) + "%";
-      bpRangeNote.textContent = translatePhrase(assessment.bpStatus) + t("bpAt") + assessment.systolic + "/" + assessment.diastolic + " mmHg";
-
-      renderTopDrivers(assessment.breakdown);
-    }
-
-    function renderTopDrivers(breakdown) {
-      const drivers = breakdown
-        .filter(function (item) { return item.score > 0; })
-        .sort(function (a, b) { return b.score - a.score; })
-        .slice(0, 3);
-
-      topDrivers.innerHTML = "";
-
-      if (!drivers.length) {
-        const li = document.createElement("li");
-        li.className = "top-driver-item";
-        li.textContent = t("noMajorDrivers");
-        topDrivers.appendChild(li);
-        return;
-      }
-
-      drivers.forEach(function (driver, index) {
-        const li = document.createElement("li");
-        const rank = document.createElement("span");
-        const name = document.createElement("span");
-
-        li.className = "top-driver-item";
-        li.style.animationDelay = (index * 70) + "ms";
-        rank.className = "driver-rank";
-        name.className = "driver-name";
-        rank.textContent = index + 1;
-        name.textContent = translatePhrase(driver.label);
-
-        li.appendChild(rank);
-        li.appendChild(name);
-        topDrivers.appendChild(li);
       });
     }
 
@@ -2098,9 +2155,7 @@
       languageSelect.setAttribute("aria-label", t("languageAria"));
       languageSelect.options[0].textContent = t("languageEnglish");
       languageSelect.options[1].textContent = t("languageGeorgian");
-      if (formAlert.classList.contains("d-none")) {
-        formAlert.textContent = t("validationMessage");
-      }
+      formAlert.textContent = t(currentAlertKey);
 
       LOCALIZED_SELECTORS.forEach(function (entry) {
         const element = document.querySelector(entry[0]);
@@ -2169,15 +2224,67 @@
       return phrase;
     }
 
-    function renderList(listElement, items, emptyText) {
-      const visibleItems = items.length ? items : [emptyText];
-      listElement.innerHTML = "";
+    const REC_CATEGORY_MAP = {
+      "Review weight, nutrition, and activity goals": "lifestyle",
+      "Consider weight, nutrition, and activity goals": "lifestyle",
+      "Smoking cessation support is strongly recommended": "lifestyle",
+      "Build toward regular moderate activity": "lifestyle",
+      "Reduce sodium-heavy and highly processed foods": "lifestyle",
+      "Consider reducing alcohol intake": "lifestyle",
+      "Add stress-management habits and recovery time": "lifestyle",
+      "Aim for a consistent 7 to 9 hours of sleep when possible": "lifestyle",
+      "Aim for consistent 7 to 9 hours of sleep when possible": "lifestyle",
+      "Discuss blood pressure targets with a clinician": "medical",
+      "Confirm blood pressure readings with repeated measurements": "monitoring",
+      "Confirm readings with repeated measurements": "monitoring",
+      "Monitor blood pressure regularly": "monitoring",
+      "Maintain healthy lifestyle habits and routine checkups": "monitoring",
+    };
 
-      visibleItems.forEach(function (item) {
-        const li = document.createElement("li");
-        li.textContent = capitalizeListItem(translatePhrase(item));
-        listElement.appendChild(li);
+    function renderRecommendations(recommendations) {
+      const groups = { lifestyle: [], medical: [], monitoring: [] };
+
+      recommendations.forEach(function (rec) {
+        const cat = REC_CATEGORY_MAP[rec] || "lifestyle";
+        groups[cat].push(rec);
       });
+
+      recommendationList.innerHTML = "";
+
+      const order = ["lifestyle", "medical", "monitoring"];
+      const labelKeys = { lifestyle: "recLifestyle", medical: "recMedical", monitoring: "recMonitoring" };
+      const itemClasses = { lifestyle: "", medical: "rec-item--medical", monitoring: "rec-item--monitoring" };
+      let anyRendered = false;
+
+      order.forEach(function (cat) {
+        if (!groups[cat].length) return;
+        anyRendered = true;
+
+        const group = document.createElement("div");
+        group.className = "rec-group";
+
+        const label = document.createElement("div");
+        label.className = "rec-group-label";
+        label.textContent = t(labelKeys[cat]);
+        group.appendChild(label);
+
+        groups[cat].forEach(function (rec, i) {
+          const item = document.createElement("div");
+          item.className = "rec-item" + (itemClasses[cat] ? " " + itemClasses[cat] : "");
+          item.style.animationDelay = (i * 70) + "ms";
+          item.textContent = capitalizeListItem(translatePhrase(rec));
+          group.appendChild(item);
+        });
+
+        recommendationList.appendChild(group);
+      });
+
+      if (!anyRendered) {
+        const msg = document.createElement("div");
+        msg.className = "rec-item";
+        msg.textContent = t("maintainHabits");
+        recommendationList.appendChild(msg);
+      }
     }
 
     function capitalizeListItem(item) {

@@ -1,58 +1,51 @@
 # Hypertension Risk Assessment Tool
 
-A single-page clinical decision support demo that estimates hypertension risk through a backend model API. The project uses a bundled HTML/CSS/JavaScript frontend and a small Python standard-library backend.
+A single-page clinical decision support demo that estimates hypertension risk within 5 years using a logistic regression model. The project uses a vanilla HTML/CSS/JS frontend and a Python standard-library backend with no external dependencies.
 
-This is a prototype UI intended to simulate how a future ML-powered hypertension risk prediction system might behave. It is not a validated medical model.
+This is a prototype intended to demonstrate how an ML-powered hypertension risk prediction system might behave in a clinical setting. It is not a validated medical model.
 
 ## Features
 
 - Responsive medical-style dashboard interface
-- Frontend calls the backend API for risk estimation
-- Python backend POC with synthetic test data
-- Self-contained executable release path
-- Demo logistic regression model trained from synthetic data
-- Automatic BMI calculation
+- Logistic regression model trained on 200 synthetic patients
+- Automatic BMI calculation from height and weight
 - Blood pressure stage classification
-- Risk percentage and category output
+- Risk percentage and category output (Low / Moderate / High)
 - Pulse pressure calculation with clinical status
-- Top risk driver surfaced at a glance
-- Animated result cards, progress bars, and range markers
-- Risk contribution breakdown bar chart
-- Clinical vs. lifestyle split visualization
-- BMI range infographic
-- Blood pressure stage infographic
-- Ranked top risk drivers panel
-- Deterministic plain-language result summary, with optional local Ollama LLM wording
-- Contributing factor explanation
-- Personalized recommendation list
-- Input validation and smooth result reveal
+- Individual risk driver bar chart (top 6 features)
+- Group-level radar chart (Age, Blood pressure, BMI, Medical history, Lifestyle)
+- BMI range and blood pressure stage infographics
+- Recommendations grouped by Lifestyle, Medical, and Monitoring
+- Input validation with unit-aware min/max guard rails
+- Bilingual interface: English and Georgian
 
 ## Inputs
 
-The tool asks for:
+| Field | Values |
+| --- | --- |
+| Age | 18–100 |
+| Height | cm or feet/inches |
+| Weight | kg or lbs |
+| Gender | Male / Female |
+| Diabetes | Yes / No |
+| Smoking | Yes / No |
+| Systolic / Diastolic BP | mmHg |
+| Family history of hypertension | Yes / No |
+| Physical activity | High / Moderate / Low |
+| Salt intake | Low / Moderate / High |
+| Alcohol intake | None / Moderate / High |
+| Stress level | Low / Moderate / High |
+| Average sleep | Normal / Short / Long |
 
-- Age
-- Height, entered in centimeters or feet and inches
-- Weight, entered in kilograms or pounds
-- Diabetes status
-- Smoking status
-- Systolic and diastolic blood pressure
-- Family history of hypertension
-- Physical activity level
-- Salt intake
-- Alcohol intake
-- Stress level
-- Average sleep duration
-
-BMI is calculated by the backend from height and weight before risk estimation.
+BMI is calculated by the backend from height and weight.
 
 ## Risk Model
 
-The active app uses `model-v1`, a small logistic regression model trained from `backend/data/test_patients.csv`. The model predicts the synthetic target `hypertension_within_5_years` and returns a risk percentage, risk category, model-derived contribution breakdown, factors, and recommendations.
+The active app uses `model-v1`, a logistic regression model trained on `backend/data/test_patients.csv` (200 synthetic rows). It predicts the synthetic target `hypertension_within_5_years` and returns a risk percentage, category, feature-level contribution breakdown, and recommendations.
 
-The plain-language summary is generated after the risk calculation. By default, the backend uses a deterministic summary. If `OLLAMA_EXPLANATIONS=1` is set, the backend can use a local Ollama model for wording; if the model is missing, the backend pulls `qwen2.5:1.5b` automatically on the first assessment request.
+Model features match the 5 core EHR variables from the associated research proposal (age, sex, BMI, smoking, diabetes) plus blood pressure and extended lifestyle predictors.
 
-`index-frontend-poc.html` preserves the previous HTML version that included browser-side rule-based logic.
+`index-frontend-poc.html` preserves a browser-side rule-based version for offline use.
 
 ## Risk Categories
 
@@ -62,223 +55,35 @@ The plain-language summary is generated after the risk calculation. By default, 
 | 30% to 70% | Moderate Risk |
 | Greater than 70% | High Risk |
 
-## Result Visualizations
-
-After calculation, the app shows:
-
-- Overall risk percentage
-- Risk category badge
-- Animated risk progress bar
-- BMI value and BMI status
-- Blood pressure reading and stage
-- Pulse pressure value and classification (Normal / Elevated / Wide)
-- Top risk driver (highest-contributing factor group)
-- Clinical vs. lifestyle split bars
-- BMI range marker
-- Blood pressure stage marker
-- Top risk drivers
-- Risk contribution breakdown
-- Plain-language summary of the result
-- Contributing factors
-- Personalized recommendations
-
-## How Recommendations Work
-
-Recommendations are generated from the user's selected risk factors. Examples include:
-
-- Elevated blood pressure: confirm readings with repeated measurements
-- Diabetes: discuss blood pressure targets with a clinician
-- Smoking: seek smoking cessation support
-- High sodium intake: reduce sodium-heavy and highly processed foods
-- Low activity: build toward regular moderate activity
-- Short sleep duration: aim for a consistent 7 to 9 hours of sleep when possible
-- Elevated BMI: consider weight, nutrition, and activity goals
-
 ## How to Run
-
-Clone the repository, train the demo model if needed, and start the backend. The backend serves the frontend and opens it in your default browser.
-
-```bash
-git clone <repository-url>
-cd hypertension-risk-predictor
-```
-
-Start the backend:
 
 ```bash
 python -m backend.app
 ```
 
-The app runs at:
-
-```text
-http://127.0.0.1:8000/
-```
-
-On Windows, if `python` is not available but the Python launcher is, use:
+On Windows without `python` in PATH:
 
 ```powershell
 py -3.9 -m backend.app
 ```
 
-The active frontend is served by the backend API. For the frontend proof of concept with browser-side rules, open `index-frontend-poc.html`.
+Opens at `http://127.0.0.1:8000/`. The backend serves `index.html` and handles all API calls.
 
-## Executable Release
-
-The first release target is a deterministic, self-contained desktop executable. Users should be able to run the executable, have a local server start automatically, and use the app in a browser without installing Python or Ollama.
-
-Build requirements for the release machine:
-
-```bash
-python -m pip install pyinstaller
-```
-
-Build the executable:
-
-```bash
-python build_release.py
-```
-
-The built file is written to:
-
-```text
-dist/HypertensionRiskTool
-```
-
-On Windows, the output is:
-
-```text
-dist/HypertensionRiskTool.exe
-```
-
-Run the executable and it will open:
-
-```text
-http://127.0.0.1:8000/
-```
-
-The release bundle includes `index.html`, `index-frontend-poc.html`, `backend/data/test_patients.csv`, and `backend/models/model-v1.json`. Ollama is disabled by default and is not required for this release.
-
-### Optional Local LLM Summary
-
-The app uses the deterministic summary by default. To opt into local Ollama summaries, install and start Ollama:
-
-```bash
-ollama serve
-```
-
-In another terminal, start the backend:
-
-```bash
-export OLLAMA_EXPLANATIONS="1"
-python -m backend.app
-```
-
-The first assessment request automatically checks `GET /api/tags`, pulls `qwen2.5:1.5b` with `POST /api/pull` if needed, then generates the summary with `POST /api/generate`.
-
-Optional settings:
-
-```bash
-export OLLAMA_MODEL="qwen2.5:1.5b"
-export OLLAMA_BASE_URL="http://127.0.0.1:11434"
-export OLLAMA_EXPLANATIONS="1"
-```
-
-To use only deterministic summaries, omit `OLLAMA_EXPLANATIONS` or set:
-
-```bash
-export OLLAMA_EXPLANATIONS="0"
-```
-
-## Optional Backend POC
-
-The `backend/` folder contains a small Python standard-library API. The active frontend sends form submissions to this API and does not include browser-side risk scoring.
-
-### Frontend Risk Engine Flag
-
-The frontend risk source is controlled in `index.html`:
-
-```js
-const APP_CONFIG = {
-  backendUrl: window.location.protocol === "file:"
-    ? "http://127.0.0.1:8000/api/risk/estimate"
-    : "/api/risk/estimate"
-};
-```
-
-### Backend Risk Engine Flag
-
-The backend uses `model-v1` by default:
-
-```bash
-python -m backend.app
-```
-
-You can also set it explicitly:
-
-```powershell
-$env:RISK_ENGINE="model-v1"
-python -m backend.app
-```
-
-`model-v1` is the supported active engine.
-
-## Training The Demo Model
-
-The project includes a dependency-free logistic regression trainer that uses the synthetic data in `backend/data/test_patients.csv`.
-
-Train the model:
+## Training the Model
 
 ```bash
 python -m backend.model_train
 ```
 
-On Windows, if `python` is not available but the Python launcher is, use:
+Reads `backend/data/test_patients.csv`, writes `backend/models/model-v1.json`.
 
-```powershell
-py -3.9 -m backend.model_train
-```
-
-This creates:
-
-```text
-backend/models/model-v1.json
-```
-
-Run the API with the trained model:
-
-```powershell
-$env:RISK_ENGINE="model-v1"
-python -m backend.app
-```
-
-Or with the Python launcher:
-
-```powershell
-py -3.9 -m backend.app
-```
-
-Important: `model-v1` is trained only on small synthetic test data. It proves the engineering flow, but it is not clinically meaningful.
-
-Start the API from the repository root:
-
-```bash
-python -m backend.app
-```
-
-The server runs at:
-
-```text
-http://127.0.0.1:8000
-```
-
-Available endpoints:
+## API
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
 | GET | `/health` | Check API status |
 | GET | `/api/test-patients` | Return synthetic patient rows |
-| POST | `/api/risk/estimate` | Estimate hypertension risk with the active backend model |
+| POST | `/api/risk/estimate` | Estimate hypertension risk |
 
 Example request:
 
@@ -292,6 +97,7 @@ Example request:
   "weightUnit": "lbs",
   "systolic": 138,
   "diastolic": 86,
+  "gender": "female",
   "diabetes": "yes",
   "smoking": "no",
   "familyHistory": "yes",
@@ -303,21 +109,33 @@ Example request:
 }
 ```
 
-Example response fields:
+Example response (abbreviated):
 
 ```json
 {
-  "riskPercent": 99,
+  "riskPercent": 95,
   "category": "High Risk",
   "modelVersion": "model-v1",
   "calculated": {
     "bmi": 33.0,
+    "bmiStatus": "Obesity range",
+    "bloodPressure": "138/86",
     "bloodPressureStage": "Stage 1 hypertension range"
   },
+  "breakdown": [
+    { "label": "Age", "score": 18 },
+    { "label": "Blood pressure", "score": 14 },
+    { "label": "BMI", "score": 20 },
+    { "label": "Medical history", "score": 22 },
+    { "label": "Lifestyle", "score": 21 }
+  ],
   "riskDrivers": [
-    { "factor": "low physical activity", "riskContribution": 25 },
-    { "factor": "high salt intake", "riskContribution": 20 },
-    { "factor": "high stress", "riskContribution": 16 }
+    { "factor": "Diabetes", "riskContribution": 18 },
+    { "factor": "Low physical activity", "riskContribution": 16 }
+  ],
+  "recommendations": [
+    "Discuss blood pressure targets with a clinician",
+    "Build toward regular moderate activity"
   ]
 }
 ```
@@ -328,29 +146,21 @@ Example response fields:
 hypertension-risk-predictor/
 ├── backend/
 │   ├── app.py
+│   ├── llm_explain.py
 │   ├── model_features.py
 │   ├── model_predict.py
 │   ├── model_train.py
 │   ├── patient_utils.py
+│   ├── resources.py
 │   ├── models/
 │   │   └── model-v1.json
 │   └── data/
 │       └── test_patients.csv
-├── build_release.py
 ├── index.html
 ├── index-frontend-poc.html
-├── release_entry.py
 └── README.md
 ```
 
-## Technologies Used
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Python standard library backend POC
-- PyInstaller release build
-
 ## Disclaimer
 
-This tool is for educational purposes only and not a substitute for professional medical advice, diagnosis, or treatment. The model is trained on synthetic test data and should not be used for real clinical decisions.
+This tool is for educational purposes only and not a substitute for professional medical advice, diagnosis, or treatment. The model is trained on synthetic data and should not be used for real clinical decisions.

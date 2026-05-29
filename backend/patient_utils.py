@@ -23,6 +23,7 @@ class PatientInput:
     alcohol: str
     stress: str
     sleep: str
+    gender: str = "male"
     height_inches: float = 0
 
 
@@ -52,6 +53,7 @@ def parse_patient_input(payload: dict[str, Any]) -> PatientInput:
         alcohol=normalize_choice(payload.get("alcohol"), "alcohol", {"none", "moderate", "high"}),
         stress=normalize_choice(payload.get("stress"), "stress", {"low", "moderate", "high"}),
         sleep=normalize_choice(payload.get("sleep"), "sleep", {"normal", "short", "long"}),
+        gender=normalize_choice(payload.get("gender", "male"), "gender", {"male", "female"}),
     )
 
     validate_patient_input(patient)

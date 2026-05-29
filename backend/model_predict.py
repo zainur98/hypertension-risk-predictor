@@ -6,7 +6,6 @@ import json
 import math
 from typing import Any
 
-from .llm_explain import OLLAMA_MODEL, build_explanation_with_ollama
 from .model_features import FEATURE_NAMES, features_from_payload
 from .patient_utils import (
     get_blood_pressure_status,
@@ -29,7 +28,6 @@ def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
     breakdown = get_group_breakdown(feature_impacts)
     clinical_total = sum(item["score"] for item in breakdown if item["label"] in {"Age", "Blood pressure", "Medical history"})
     lifestyle_total = sum(item["score"] for item in breakdown if item["label"] in {"BMI", "Lifestyle"})
-    fallback_explanation = get_plain_language_explanation(risk, feature_impacts, breakdown)
     assessment = {
         "riskPercent": risk,
         "category": get_risk_category(risk),
@@ -44,16 +42,11 @@ def assess_with_model(payload: dict[str, Any]) -> dict[str, Any]:
             "modelProbability": round(probability, 4),
         },
         "breakdown": breakdown,
-        "riskDrivers": feature_impacts[:3],
+        "riskDrivers": feature_impacts,
         "factors": [impact["factor"] for impact in feature_impacts[:5]] or ["No major model drivers detected"],
         "recommendations": get_recommendations(feature_impacts),
         "disclaimer": "Synthetic-data demo model. Not a substitute for professional medical advice.",
     }
-    explanation, source = get_assessment_explanation(assessment, fallback_explanation)
-    assessment["explanation"] = explanation
-    assessment["explanationSource"] = source
-    assessment["explanationModel"] = OLLAMA_MODEL if source == "ollama" else "deterministic-fallback"
-
     return assessment
 
 
@@ -61,7 +54,10 @@ def load_model() -> dict[str, Any]:
     if not MODEL_PATH.exists():
         raise ValueError("model-v1 is not trained yet. Run: python -m backend.model_train")
 
-    return json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+    try:
+        return json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("model-v1.json is corrupted. Run: python -m backend.model_train") from exc
 
 
 def scale_features(features: list[float], means: list[float], scales: list[float]) -> list[float]:
@@ -90,7 +86,7 @@ def get_feature_impacts(model: dict[str, Any], scaled_features: list[float], ris
         impacts.append({
             "feature": item["feature"],
             "factor": item["factor"],
-            "riskContribution": max(1, round(item["rawContribution"] / total * risk)),
+            "riskContribution": max(1, round(item["rawContribution"] / total * risk)) if risk > 0 else 0,
         })
 
     impacts.sort(key=lambda item: item["riskContribution"], reverse=True)
@@ -122,7 +118,7 @@ def group_for_feature(feature: str) -> str:
         return "Blood pressure"
     if feature == "bmi":
         return "BMI"
-    if feature in {"diabetes_yes", "family_history_yes"}:
+    if feature in {"diabetes_yes", "family_history_yes", "gender_male"}:
         return "Medical history"
     return "Lifestyle"
 
@@ -150,68 +146,6 @@ def get_recommendations(feature_impacts: list[dict[str, Any]]) -> list[str]:
     return recommendations or ["Maintain healthy lifestyle habits and routine checkups"]
 
 
-def get_plain_language_explanation(
-    risk: int,
-    feature_impacts: list[dict[str, Any]],
-    breakdown: list[dict[str, Any]],
-) -> str:
-    """Summarize the structured model output without changing the risk score."""
-    category = get_risk_category(risk).lower()
-    drivers = [impact["factor"] for impact in feature_impacts[:3]]
-    driver_text = format_driver_text(drivers)
-    clinical_score = sum(
-        item["score"]
-        for item in breakdown
-        if item["label"] in {"Age", "Blood pressure", "Medical history"}
-    )
-    lifestyle_score = sum(
-        item["score"]
-        for item in breakdown
-        if item["label"] in {"BMI", "Lifestyle"}
-    )
-    stronger_area = "clinical factors" if clinical_score >= lifestyle_score else "lifestyle factors"
-
-    if risk < 10:
-        return (
-            "Low risk estimate, with no major risk driver standing out in this screening. "
-            "Keep routine checkups in mind and review any health concerns with a clinician."
-        )
-
-    if risk < 30:
-        return (
-            f"Low risk estimate, with {driver_text} contributing most in this screening. "
-            "Keep routine checkups in mind and review any health concerns with a clinician."
-        )
-
-    if risk <= 70 and driver_text:
-        return (
-            f"Moderate risk estimate, with {driver_text} as the clearest contributors. "
-            f"The pattern leans toward {stronger_area}; review this screening result "
-            "with a clinician."
-        )
-
-    if driver_text:
-        return (
-            f"{category.capitalize()} estimate, with {driver_text} as the clearest "
-            f"contributors. The pattern leans toward {stronger_area}; review this "
-            "screening result with a clinician."
-        )
-
-    return (
-        f"{category.capitalize()} estimate, with no single dominant driver in the "
-        "submitted values. Keep monitoring routine readings and use this as a screening "
-        "aid, not medical advice."
-    )
-
-
-def get_assessment_explanation(assessment: dict[str, Any], fallback: str) -> tuple[str, str]:
-    try:
-        return build_explanation_with_ollama(assessment), "ollama"
-    except Exception as exc:
-        print(f"Ollama explanation unavailable; using fallback: {exc}")
-        return fallback, "fallback"
-
-
 def format_driver_text(drivers: list[str]) -> str:
     if not drivers:
         return ""
@@ -224,6 +158,7 @@ def format_driver_text(drivers: list[str]) -> str:
 
 def format_feature_name(name: str) -> str:
     label_map = {
+        "gender_male": "Male sex",
         "bmi": "BMI",
         "diabetes_yes": "Diabetes",
         "smoking_yes": "Smoking",

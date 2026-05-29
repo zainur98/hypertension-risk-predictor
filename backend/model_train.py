@@ -83,6 +83,7 @@ def csv_row_to_payload(row: dict[str, str]) -> dict:
         "alcohol": row["alcohol"],
         "stress": row["stress"],
         "sleep": row["sleep"],
+        "gender": row["sex"],
     }
 
 
