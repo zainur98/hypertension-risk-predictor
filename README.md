@@ -1,5 +1,7 @@
 # Hypertension Risk Assessment Tool
 
+![stack](https://img.shields.io/badge/stack-Python%20stdlib%20%2B%20Vanilla%20JS-4A90D9?style=flat-square)
+
 A single-page clinical decision support demo that estimates hypertension risk within 5 years using a logistic regression model. The project uses a vanilla HTML/CSS/JS frontend and a Python standard-library backend with no external dependencies.
 
 This is a prototype intended to demonstrate how an ML-powered hypertension risk prediction system might behave in a clinical setting. It is not a validated medical model.
