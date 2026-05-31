@@ -1024,6 +1024,7 @@
       }
 
       .language-control {
+        flex: none;
         width: 100%;
       }
 
@@ -1079,7 +1080,7 @@
           <div>
             <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Clinical demo</div>
             <h1 id="pageTitle" class="tool-title">Hypertension Risk Assessment Tool</h1>
-            <p class="tool-subtitle">Estimate hypertension risk from common clinical and lifestyle factors with a backend-powered demo.</p>
+            <p class="tool-subtitle">Estimate your 5-year hypertension risk from common clinical and lifestyle factors.</p>
           </div>
           <div class="language-control">
             <label for="languageSelect">Language</label>
@@ -1404,7 +1405,7 @@
         languageGeorgian: "Georgian",
         title: "Hypertension Risk Assessment Tool",
         eyebrow: "Clinical demo",
-        subtitle: "Estimate hypertension risk from common clinical and lifestyle factors with a backend-powered demo.",
+        subtitle: "Estimate your 5-year hypertension risk from common clinical and lifestyle factors.",
         patientDetails: "Patient details",
         sectionNote: "Enter values to generate an estimated risk profile.",
         validationMessage: "Please complete all fields with valid values before calculating risk.",
@@ -1503,7 +1504,7 @@
         languageGeorgian: "ქართული",
         title: "ჰიპერტენზიის რისკის შეფასების ინსტრუმენტი",
         eyebrow: "კლინიკური დემო",
-        subtitle: "შეაფასეთ ჰიპერტენზიის რისკი გავრცელებული კლინიკური და ცხოვრების წესის ფაქტორებით, backend-ზე მომუშავე დემოს გამოყენებით.",
+        subtitle: "შეაფასეთ თქვენი 5-წლიანი ჰიპერტენზიის რისკი გავრცელებული კლინიკური და ცხოვრების წესის ფაქტორებით.",
         patientDetails: "პაციენტის მონაცემები",
         sectionNote: "შეიყვანეთ მნიშვნელობები სავარაუდო რისკის პროფილის მისაღებად.",
         validationMessage: "გთხოვთ, რისკის გამოთვლამდე ყველა ველი შეავსოთ სწორი მნიშვნელობებით.",
@@ -1889,7 +1890,7 @@
     }
 
     function renderRadarChart(breakdown) {
-      const cx = 150, cy = 148, R = 88;
+      const cx = 175, cy = 150, R = 88;
       const total = breakdown.reduce(function (s, g) { return s + g.score; }, 0) || 1;
       const angles = breakdown.map(function (_, i) {
         return -Math.PI / 2 + i * 2 * Math.PI / breakdown.length;
@@ -1930,7 +1931,7 @@
       }).join("");
 
       breakdownChart.innerHTML =
-        '<svg viewBox="0 0 300 280" width="100%" style="overflow:visible;display:block;max-width:360px;margin:0 auto;">' +
+        '<svg viewBox="0 0 380 295" width="100%" style="display:block;max-width:420px;margin:0 auto;">' +
         grids + axes +
         '<polygon points="' + dataPts + '" fill="rgba(18,107,154,0.15)" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>' +
         dots + labels + "</svg>";

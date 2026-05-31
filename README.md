@@ -71,6 +71,24 @@ py -3.9 -m backend.app
 
 Opens at `http://127.0.0.1:8000/`. The backend serves `index.html` and handles all API calls.
 
+## Executable Release
+
+To build a self-contained desktop executable (no Python install required to run):
+
+```bash
+pip install pyinstaller
+python build_release.py
+```
+
+Output:
+
+```text
+dist/HypertensionRiskTool        # macOS / Linux
+dist/HypertensionRiskTool.exe    # Windows
+```
+
+The executable bundles `index.html`, `index-frontend-poc.html`, the model, and the test data. Running it starts the local server and opens the app in the default browser.
+
 ## Training the Model
 
 ```bash
@@ -160,6 +178,8 @@ hypertension-risk-predictor/
 │       └── test_patients.csv
 ├── index.html
 ├── index-frontend-poc.html
+├── build_release.py
+├── release_entry.py
 └── README.md
 ```
 

@@ -18,7 +18,7 @@ from .model_predict import assess_with_model
 from .resources import resource_path
 
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 8000
 SERVER_URL = f"http://{HOST}:{PORT}/"
 DATA_PATH = resource_path("backend/data/test_patients.csv")

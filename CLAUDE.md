@@ -64,6 +64,8 @@ English and Georgian (`ka`). Translations live entirely in `index.html` — two 
 - Replaced Contributing Factors card and group bar chart with individual feature bar chart (`riskDriversChart`) + radar chart side by side
 - Recommendations redesigned: full-width, grouped into Lifestyle / Medical / Monitoring with colour-coded left borders
 - Added **Gender** field to the form (Male/Female); wired through model pipeline; model retrained on 200-row synthetic dataset
+- Fixed mobile header gap: added `flex: none` to `.language-control` in the `max-width: 576px` media query — without it the `flex: 0 0 180px` base rule was applying 180px as a fixed height in the stacked column layout
+- Fixed radar chart overflowing right on mobile: widened SVG viewBox from `0 0 300 280` to `0 0 380 295`, shifted centre from `cx=150` to `cx=175`, removed `overflow:visible`
 
 ## Results section layout
 
